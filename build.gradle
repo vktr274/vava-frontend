@@ -25,5 +25,5 @@ javafx {
 }
 
 application {
-    mainClassName = 'Main'
+    mainClassName = 'sk.vava.zalospevaci.Main'
 }
