@@ -5,8 +5,7 @@ Aplikácia pre klienta vyžíva **JavaFX**.
 
 ### Setup
 Aplikácia sa spúšťa pomocou **Gradle** v príkazovom riadku.
+
 ```
-gradlew --refresh-dependencies
-gradlew build
 gradlew run
 ```
