@@ -44,6 +44,7 @@
     -fx-font-size: 15px;
 }
 
+
 .itembutton{
     -fx-background-radius: 15;
     -fx-background-color: #adadad;
@@ -52,6 +53,17 @@
     -fx-min-height: 110px;
     -fx-min-width: 900px;
     -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center-left;
+}
+
+.textfieldorder{
+    -fx-background-radius: 15;
+    -fx-background-color: #d7d7d7;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-min-height: 70px;
+    -fx-min-width: 800px;
+    -fx-effect: dropshadow( gaussian , rgba(84, 84, 84, 0.7), 15,0,0,1 );
     -fx-alignment: center-left;
 }
 
