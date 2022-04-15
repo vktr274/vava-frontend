@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javafx.scene.paint.Color;
+import javafx.scene.control.Button;
 
 public class HomeScreenController implements Initializable {
 
@@ -62,16 +63,23 @@ public class HomeScreenController implements Initializable {
 
         Text brandLabel = new Text("Get Your Meal");
         TextField searchInput = new TextField();
+        Button searchButton = new Button();
+        StackPane inputPane = new StackPane();
         Image image = new Image("https://i.imgur.com/Tf3j0rU.jpg");
 
         brandLabel.getStyleClass().add("brandLabel");
         searchInput.getStyleClass().add("searchInput");
         searchInput.setPromptText("Search...");
 
+        inputPane.getChildren().addAll(searchInput, searchButton);
+
+        searchButton.setTranslateX(420);
+
+        searchButton.getStyleClass().add("searchButton");
+
         infoVBox.setAlignment(Pos.CENTER);
         infoVBox.setSpacing(25);
-        infoVBox.getChildren().add(brandLabel);
-        infoVBox.getChildren().add(searchInput);
+        infoVBox.getChildren().addAll(brandLabel, inputPane);
 
         for(int i = 0; i < 2; i++){
             JSONObject restaurant = restaurantsArray.getJSONObject(i);
