@@ -187,6 +187,29 @@
     -fx-background-color: #696969;
 }
 
+.brandLabel {
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 40px;
+}
+
+.searchInput {
+    -fx-padding: 20 10;
+    -fx-start-margin: 20;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-min-height: 70px;
+    -fx-min-width: 800px;
+    -fx-effect: dropshadow( gaussian , rgba(84, 84, 84, 0.7), 15,0,0,1 );
+    -fx-alignment: center-left;
+}
+
+.restaurantBoxLabel {
+    -fx-text-fill: #fff;
+    -fx-background-color: #000;
+    -fx-font-size: 30;
+    -fx-font-family: "Roboto Slab ExtraBold";
+}
+
 #menubtn {
     -fx-start-margin: 20;
     -fx-background-image: url("./images/menu.png");
@@ -201,4 +224,9 @@
     -fx-background-size: 30 30;
     -fx-background-repeat: no-repeat;
     -fx-background-position:center;
+}
+
+#brandLabel {
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 40px;
 }
