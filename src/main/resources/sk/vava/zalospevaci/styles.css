@@ -1,3 +1,244 @@
+@font-face {
+    src: url('./fonts/RobotoSlabExtraBold.ttf');
+}
+
 .label {
-    -fx-text-fill: blue;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 40px;
+}
+
+.itemname {
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 30px;
+}
+
+.itemdesc {
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 18px;
+    -fx-text-fill: #545252;
+}
+
+.itemnamebar {
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 22px;
+    -fx-alignment: center-left;
+}
+.itemnametext {
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 16px;
+    -fx-alignment: center-left;
+}
+
+.itemnamephone {
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 18px;
+    -fx-alignment: center-left;
+}
+
+.tree{
+    -fx-background-color: gray;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 200px;
+    -fx-text-fill: black;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 15px;
+}
+
+
+.itembutton{
+    -fx-background-radius: 15;
+    -fx-background-color: #adadad;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 24px;
+    -fx-min-height: 110px;
+    -fx-min-width: 900px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center-left;
+}
+
+.textfieldorder{
+    -fx-background-radius: 15;
+    -fx-background-color: #d7d7d7;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-min-height: 70px;
+    -fx-min-width: 800px;
+    -fx-effect: dropshadow( gaussian , rgba(84, 84, 84, 0.7), 15,0,0,1 );
+    -fx-alignment: center-left;
+}
+
+.itembutton:hover{
+    -fx-background-color: #919191;
+}
+
+.itembutton:pressed{
+    -fx-background-color: #5c5c5c;
+}
+
+.menuitem{
+    -fx-background-radius: 15;
+    -fx-background-color: #adadad;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 24px;
+    -fx-min-height: 110px;
+    -fx-min-width: 900px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center-left;
+}
+
+.menuitem:hover{
+    -fx-background-color: #919191;
+}
+
+.whitebutton{
+    -fx-background-radius: 25;
+    -fx-background-color: #ffffff;
+    -fx-font-family: 'Roboto Slab ExtraBold';
+    -fx-font-size: 20px;
+    -fx-min-height: 50px;
+    -fx-min-width: 130px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.whitebutton:hover{
+    -fx-background-color: #e0e0e0;
+}
+
+.whitebutton:pressed{
+    -fx-background-color: #a8a8a8;
+}
+
+.circlebutton{
+    -fx-background-radius: 25;
+    -fx-background-color: #ffffff;
+    -fx-font-family: 'Roboto Slab ExtraBold';
+    -fx-font-size: 25px;
+    -fx-min-height: 50px;
+    -fx-min-width: 50px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.circlebutton:hover{
+    -fx-background-color: #e0e0e0;
+}
+
+.circlebutton:pressed{
+    -fx-background-color: #a8a8a8;
+}
+
+.blackbutton{
+    -fx-background-radius: 25;
+    -fx-background-color: #000000;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Roboto Slab ExtraBold';
+    -fx-font-size: 20px;
+    -fx-min-height: 50px;
+    -fx-min-width: 130px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.blackbutton:hover{
+    -fx-background-color: #343434;
+}
+
+.blackbutton:pressed{
+    -fx-background-color: #696969;
+}
+
+.whitebuttonwide{
+    -fx-background-radius: 20;
+    -fx-background-color: #ffffff;
+    -fx-font-family: 'Roboto Slab ExtraBold';
+    -fx-font-size: 20px;
+    -fx-min-height: 50px;
+    -fx-min-width: 250px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.whitebuttonwide:hover{
+    -fx-background-color: #e0e0e0;
+}
+
+.whitebuttonwide:pressed{
+    -fx-background-color: #a8a8a8;
+}
+
+.blackbuttonwide{
+    -fx-background-radius: 20;
+    -fx-background-color: #000000;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Roboto Slab ExtraBold';
+    -fx-font-size: 20px;
+    -fx-min-height: 50px;
+    -fx-min-width: 250px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.blackbuttonwide:hover{
+    -fx-background-color: #343434;
+}
+
+.blackbuttonwide:pressed{
+    -fx-background-color: #696969;
+}
+
+.brandLabel {
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 40px;
+}
+
+.searchInput {
+    -fx-padding: 20 10;
+    -fx-start-margin: 20;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-min-height: 70px;
+    -fx-min-width: 800px;
+    -fx-effect: dropshadow( gaussian , rgba(84, 84, 84, 0.7), 15,0,0,1 );
+    -fx-alignment: center-left;
+}
+
+.searchButton {
+    -fx-background-image: url("./images/search.png");
+    -fx-start-margin: 20;
+    -fx-background-size: 30 30;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position:center;
+    -fx-min-width: 50;
+    -fx-min-height: 50;
+    -fx-background-color: none;
+    -fx-border-color: none;
+}
+
+.restaurantBoxLabel {
+    -fx-text-fill: #fff;
+    -fx-background-color: #000;
+    -fx-font-size: 30;
+    -fx-font-family: "Roboto Slab ExtraBold";
+}
+
+#menubtn {
+    -fx-start-margin: 20;
+    -fx-background-image: url("./images/menu.png");
+    -fx-background-size: 30 30;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position:center;
+}
+
+#userbtn {
+    -fx-start-margin: 20;
+    -fx-background-image: url("./images/user.png");
+    -fx-background-size: 30 30;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position:center;
+}
+
+#brandLabel {
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 40px;
 }

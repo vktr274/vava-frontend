@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.vava.zalospevaci.RestaurantListController">
+   <children>
+      <HBox prefHeight="66.0" prefWidth="1280.0" style="-fx-background-color: #949494">
+         <children>
+            <Button fx:id="menubtn" alignment="CENTER" mnemonicParsing="false" prefHeight="64.0" prefWidth="86.0" style="-fx-background-color: transparent" />
+            <Pane prefHeight="73.0" prefWidth="1134.0" />
+            <Button fx:id="userbtn" alignment="CENTER" mnemonicParsing="false" prefHeight="55.0" prefWidth="62.0" style="-fx-background-color: transparent" />
+         </children>
+      </HBox>
+      <GridPane prefHeight="682.0" prefWidth="1280.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="996.0" minWidth="10.0" prefWidth="996.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="635.0" minWidth="10.0" prefWidth="284.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ScrollPane minWidth="800.0" prefHeight="363.0" prefWidth="1029.0">
+               <content>
+                  <VBox fx:id="tree" prefHeight="442.0" prefWidth="954.0">
+                     <padding>
+                        <Insets bottom="30.0" left="30.0" top="30.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+      </GridPane>
+   </children>
+</VBox>
