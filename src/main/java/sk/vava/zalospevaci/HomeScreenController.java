@@ -81,7 +81,9 @@ public class HomeScreenController implements Initializable {
         infoVBox.setSpacing(25);
         infoVBox.getChildren().addAll(brandLabel, inputPane);
 
-        for(int i = 0; i < 2; i++){
+        int length = Math.min(restaurantsArray.length(), 2);
+
+        for(int i = 0; i < length; i++){
             JSONObject restaurant = restaurantsArray.getJSONObject(i);
 
             ImageView imageView = new ImageView();
