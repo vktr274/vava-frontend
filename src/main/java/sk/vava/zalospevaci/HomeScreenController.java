@@ -8,6 +8,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,15 +19,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Button;
+import org.w3c.dom.ls.LSOutput;
 
 public class HomeScreenController implements Initializable {
 
@@ -33,6 +38,10 @@ public class HomeScreenController implements Initializable {
     private VBox infoVBox;
     @FXML
     private HBox restaurantsHBox;
+    @FXML
+    private Button menubtn;
+    @FXML
+    private VBox menubar;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -60,7 +69,7 @@ public class HomeScreenController implements Initializable {
 
     public void homeScreen(){
         JSONArray restaurantsArray = new JSONArray(getJSON("http://localhost:8080/restaurants"));
-
+        menuBarF();
         Text brandLabel = new Text("Get Your Meal");
         TextField searchInput = new TextField();
         Button searchButton = new Button();
@@ -80,9 +89,7 @@ public class HomeScreenController implements Initializable {
         infoVBox.setAlignment(Pos.CENTER);
         infoVBox.setSpacing(25);
         infoVBox.getChildren().addAll(brandLabel, inputPane);
-
         int length = Math.min(restaurantsArray.length(), 2);
-
         for(int i = 0; i < length; i++){
             JSONObject restaurant = restaurantsArray.getJSONObject(i);
 
@@ -119,5 +126,39 @@ public class HomeScreenController implements Initializable {
         }
 
 
+    }
+
+    public void menuBarF(){
+        menubar.getStyleClass().add("menubar");
+        menubar.setVisible(false);
+        menubar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Pane spacer = new Pane();
+        spacer.setPrefHeight(200);
+        Button restaurant = new Button("Restaurants");
+        Button settings = new Button("Settings");
+        restaurant.getStyleClass().add("whitebuttonmenu");
+        settings.getStyleClass().add("whitebuttonmenu");
+        goBack.getStyleClass().add("backbutton");
+        menubar.getChildren().addAll(goBack,spacer,restaurant,settings);
+        menubtn.setOnMouseClicked(e -> {
+            menubar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            menubar.setVisible(false);
+        });
+        restaurant.setOnMouseClicked(e -> {
+            Stage stage = (Stage) restaurant.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
     }
 }

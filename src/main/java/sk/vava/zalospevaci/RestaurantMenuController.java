@@ -38,6 +38,11 @@ public class RestaurantMenuController implements Initializable {
     @FXML
     private VBox restInfo;
 
+    @FXML
+    private Button menubtn;
+    @FXML
+    private VBox menubar;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         SetScreen();
@@ -64,6 +69,7 @@ public class RestaurantMenuController implements Initializable {
 
     public void SetScreen(){
         menu.setSpacing(25);
+        menuBarF();
         JSONObject restaurantJson = JSONLoaded.getRestaurant();
         System.out.println(restaurantJson.getInt("id"));
         JSONArray array = new JSONArray(getJSON("http://localhost:8080/items/"+restaurantJson.getInt("id")));
@@ -186,5 +192,39 @@ public class RestaurantMenuController implements Initializable {
         restInfo.setAlignment(Pos.TOP_CENTER);
         restInfo.getChildren().addAll(spacer1,rImageView,rN,addr,ph,spacer3,currentPrice,reviews,checkout,spacer2);
 
+    }
+
+    public void menuBarF(){
+        menubar.getStyleClass().add("menubar");
+        menubar.setVisible(false);
+        menubar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Pane spacer = new Pane();
+        spacer.setPrefHeight(200);
+        Button restaurant = new Button("Restaurants");
+        Button settings = new Button("Settings");
+        restaurant.getStyleClass().add("whitebuttonmenu");
+        settings.getStyleClass().add("whitebuttonmenu");
+        goBack.getStyleClass().add("backbutton");
+        menubar.getChildren().addAll(goBack,spacer,restaurant,settings);
+        menubtn.setOnMouseClicked(e -> {
+            menubar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            menubar.setVisible(false);
+        });
+        restaurant.setOnMouseClicked(e -> {
+            Stage stage = (Stage) restaurant.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
     }
 }

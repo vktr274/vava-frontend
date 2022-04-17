@@ -44,6 +44,13 @@
     -fx-font-size: 15px;
 }
 
+.menubar{
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 15px;
+}
+
 
 .itembutton{
     -fx-background-radius: 15;
@@ -107,6 +114,33 @@
 
 .whitebutton:pressed{
     -fx-background-color: #a8a8a8;
+}
+
+.whitebuttonmenu{
+    -fx-background-radius: 25;
+    -fx-background-color: #ffffff;
+    -fx-font-family: 'Roboto Slab ExtraBold';
+    -fx-font-size: 20px;
+    -fx-min-height: 50px;
+    -fx-min-width: 200px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.whitebuttonmenu:hover{
+    -fx-background-color: #e0e0e0;
+}
+
+.whitebuttonmenu:pressed{
+    -fx-background-color: #a8a8a8;
+}
+
+.backbutton{
+    -fx-background-color: #ffffff;
+    -fx-font-family: 'Roboto Slab ExtraBold';
+    -fx-font-size: 28px;
+    -fx-min-height: 50px;
+    -fx-min-width: 200px;
 }
 
 .circlebutton{
@@ -204,7 +238,6 @@
 }
 
 .searchButton {
-    -fx-background-image: url("./images/search.png");
     -fx-start-margin: 20;
     -fx-background-size: 30 30;
     -fx-background-repeat: no-repeat;

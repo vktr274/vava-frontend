@@ -27,6 +27,10 @@ public class RestaurantListController implements Initializable {
 
     @FXML
     private VBox tree;
+    @FXML
+    private Button menubtn;
+    @FXML
+    private VBox menubar;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -59,7 +63,7 @@ public class RestaurantListController implements Initializable {
         restaurantLabel.getStyleClass().add("label");
         tree.getChildren().add(restaurantLabel);
 
-
+        menuBarF();
         for(int i=0; i<array.length();i++){
             Image image = new Image("https://i.imgur.com/Tf3j0rU.jpg");
             Pane spacer1 = new Pane();
@@ -68,7 +72,6 @@ public class RestaurantListController implements Initializable {
             HBox restaurant = new HBox(25);
             Button addReview = new Button();
             JSONObject object = array.getJSONObject(i);
-
             HBox.setHgrow(spacer2, Priority.ALWAYS);
             spacer1.setPrefWidth(0);
             spacer3.setPrefWidth(0);
@@ -101,5 +104,38 @@ public class RestaurantListController implements Initializable {
 
             tree.getChildren().add(restaurant);
         }
+    }
+    public void menuBarF(){
+        menubar.getStyleClass().add("menubar");
+        menubar.setVisible(false);
+        menubar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Pane spacer = new Pane();
+        spacer.setPrefHeight(200);
+        Button restaurant = new Button("Restaurants");
+        Button settings = new Button("Settings");
+        restaurant.getStyleClass().add("whitebuttonmenu");
+        settings.getStyleClass().add("whitebuttonmenu");
+        goBack.getStyleClass().add("backbutton");
+        menubar.getChildren().addAll(goBack,spacer,restaurant,settings);
+        menubtn.setOnMouseClicked(e -> {
+            menubar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            menubar.setVisible(false);
+        });
+        restaurant.setOnMouseClicked(e -> {
+            Stage stage = (Stage) restaurant.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
     }
 }
