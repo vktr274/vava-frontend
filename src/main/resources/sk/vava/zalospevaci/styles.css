@@ -255,6 +255,65 @@
     -fx-font-family: "Roboto Slab ExtraBold";
 }
 
+.form {
+    -fx-border-color: black;
+    -fx-border-radius: 10;
+}
+
+.formTitlePane {
+    -fx-border-color: black;
+    -fx-min-height: 40;
+    -fx-border-radius: 10;
+}
+
+.formTitle {
+    -fx-font-family: "Roboto Slab ExtraBold";
+}
+
+.formInput {
+    -fx-background-radius: 10;
+    -fx-background-color: #d7d7d7;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 16px;
+    -fx-min-height: 30px;
+    -fx-width: 200px;
+    -fx-alignment: center-left;
+}
+
+.formButton {
+    -fx-background-radius: 24;
+    -fx-background-color: #000000;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Roboto Slab';
+    -fx-font-size: 14px;
+    -fx-min-height: 40px;
+    -fx-min-width: 140px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.formButton:hover{
+    -fx-background-color: #343434;
+}
+
+.formButton:pressed{
+    -fx-background-color: #696969;
+}
+
+.altButton {
+    -fx-border-color: none;
+    -fx-background-color: none;
+    -fx-underline: true;
+}
+
+.altButton:hover {
+    -fx-text-fill: #343434;
+}
+
+.altButton:pressed{
+    -fx-text-fill: #696969;
+}
+
 #menubtn {
     -fx-start-margin: 20;
     -fx-background-image: url("./images/menu.png");

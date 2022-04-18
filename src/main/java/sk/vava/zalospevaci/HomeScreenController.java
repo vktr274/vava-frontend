@@ -41,7 +41,12 @@ public class HomeScreenController implements Initializable {
     @FXML
     private Button menubtn;
     @FXML
+    private Button userbtn;
+    @FXML
     private VBox menubar;
+    @FXML
+    private VBox userBar;
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -64,12 +69,12 @@ public class HomeScreenController implements Initializable {
             e.printStackTrace();
             return "ERROR";
         }
-
     }
 
     public void homeScreen(){
         JSONArray restaurantsArray = new JSONArray(getJSON("http://localhost:8080/restaurants"));
         menuBarF();
+        userBarF();
         Text brandLabel = new Text("Get Your Meal");
         TextField searchInput = new TextField();
         Button searchButton = new Button();
@@ -159,6 +164,56 @@ public class HomeScreenController implements Initializable {
             Scene scene = new Scene(root, 1280, 720);
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
             stage.setScene(scene);
+        });
+    }
+
+    public void userBarF() {
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Pane spacer = new Pane();
+        spacer.setPrefHeight(200);
+        Button login = new Button("Login");
+        Button register = new Button("Register");
+
+        login.setOnMouseClicked(e -> {
+            Stage stage = (Stage) login.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("login.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        register.setOnMouseClicked(e -> {
+            Stage stage = (Stage) register.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("register.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        login.getStyleClass().add("whitebuttonmenu");
+        register.getStyleClass().add("whitebuttonmenu");
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack,spacer,login,register);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
         });
     }
 }
