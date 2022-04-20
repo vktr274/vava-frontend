@@ -94,9 +94,27 @@ public class LoginController implements Initializable  {
 
         StackPane titlePane = new StackPane();
         Text label = new Text("Login");
+        Button goBack = new Button("X");
+
+        goBack.setTranslateX(180);
+
+        goBack.setOnMouseClicked(e -> {
+            Stage stage = (Stage) goBack.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
         label.getStyleClass().add("formTitle");
 
-        titlePane.getChildren().add(label);
+        titlePane.getChildren().addAll(label, goBack);
         titlePane.getStyleClass().add("formTitlePane");
 
         TextField username = new TextField();

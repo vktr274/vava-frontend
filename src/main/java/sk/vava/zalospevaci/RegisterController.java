@@ -1,13 +1,17 @@
 package sk.vava.zalospevaci;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -33,6 +37,8 @@ public class RegisterController implements Initializable {
 
     @FXML
     private VBox mainVBox;
+
+    private boolean successful;
 
     public String handleRegister(String url, String username, String password, String email, boolean isManager, String countryCode, String number){
         JSONObject requestB = new JSONObject();
@@ -65,6 +71,8 @@ public class RegisterController implements Initializable {
         HttpResponse<String> response;
         try {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if(response.statusCode() == 201){ successful = true; }
+            System.out.println(response.statusCode());
             return response.body();
         } catch (InterruptedException | IOException e) {
             return "ERROR";
@@ -90,7 +98,25 @@ public class RegisterController implements Initializable {
         Text label = new Text("Create Account");
         label.getStyleClass().add("formTitle");
 
-        titlePane.getChildren().add(label);
+        Button goBack = new Button("X");
+
+        goBack.setTranslateX(180);
+
+        goBack.setOnMouseClicked(e -> {
+            Stage stage = (Stage) goBack.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        titlePane.getChildren().addAll(label, goBack);
         titlePane.getStyleClass().add("formTitlePane");
 
         TextField name = new TextField();
@@ -142,6 +168,19 @@ public class RegisterController implements Initializable {
             RadioButton rb = (RadioButton) radioGroup.getSelectedToggle();
             boolean isManager = Objects.equals(rb.getText(), "Restaurant Manager");
             handleRegister("http://localhost:8080/users", name.getText(), password.getText(), email.getText(), isManager, prefix.getText(), phone.getText());
+            if(successful) {
+                Stage stage = (Stage) registerButton.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("login.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+            }
         });
 
         HBox radioButtons = new HBox();
