@@ -8,8 +8,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class RegisterController implements Initializable {
@@ -18,8 +27,49 @@ public class RegisterController implements Initializable {
         register();
     }
 
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .build();
+
     @FXML
     private VBox mainVBox;
+
+    public String handleRegister(String url, String username, String password, String email, boolean isManager, String countryCode, String number){
+        JSONObject requestB = new JSONObject();
+        requestB.put("username", username);
+        requestB.put("password", password);
+        requestB.put("email", email);
+
+        if (isManager) {
+            requestB.put("role", "manager");
+        } else {
+            requestB.put("role", "user");
+        }
+
+        requestB.put("phone", new JSONObject().put("country_code", countryCode).put("number", number));
+        requestB.put("address", new JSONObject().put("name", "Not Set").put("street","Not Set").put("building_number", "0").put("city", "Not Set").put("state", "Not Set").put("postcode","0"));
+
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(requestB.toString()))
+                    .uri(new URI(url))
+                    .setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
+                    .header("Content-Type", "application/json")
+                    .build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
+
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        } catch (InterruptedException | IOException e) {
+            return "ERROR";
+        }
+    }
 
     public void register() {
         VBox container = new VBox();
@@ -87,6 +137,12 @@ public class RegisterController implements Initializable {
 
         Button registerButton = new Button("Create");
         registerButton.getStyleClass().add("formButton");
+
+        registerButton.setOnMouseClicked(e -> {
+            RadioButton rb = (RadioButton) radioGroup.getSelectedToggle();
+            boolean isManager = Objects.equals(rb.getText(), "Restaurant Manager");
+            handleRegister("http://localhost:8080/users", name.getText(), password.getText(), email.getText(), isManager, prefix.getText(), phone.getText());
+        });
 
         HBox radioButtons = new HBox();
         radioButtons.setAlignment(Pos.CENTER);

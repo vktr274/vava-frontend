@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -47,7 +48,6 @@ public class HomeScreenController implements Initializable {
     @FXML
     private VBox userBar;
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         homeScreen();
@@ -73,8 +73,20 @@ public class HomeScreenController implements Initializable {
 
     public void homeScreen(){
         JSONArray restaurantsArray = new JSONArray(getJSON("http://localhost:8080/restaurants"));
+        JSONObject user = JSONLoaded.getUser();
+
+        if (user != null) {
+            if(!Objects.equals(user.getString("token"), "")){
+                if(Objects.equals(user.getString("role"), "manager")) {
+                    userBarManagerF();
+                }
+            }
+        } else {
+            userBarF();
+        }
+
         menuBarF();
-        userBarF();
+
         Text brandLabel = new Text("Get Your Meal");
         TextField searchInput = new TextField();
         Button searchButton = new Button();
@@ -209,6 +221,48 @@ public class HomeScreenController implements Initializable {
         register.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,login,register);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
+        });
+    }
+
+    public void userBarManagerF() {
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Pane spacer = new Pane();
+        spacer.setPrefHeight(200);
+        Button accountSettings = new Button("Account Settings");
+        Button createAccount = new Button("Create Account");
+        Button manageRestaurant = new Button("Manage Restaurant");
+        Button logout = new Button("Logout");
+
+        logout.setOnMouseClicked(e -> {
+            JSONLoaded.setUser(null);
+            Stage stage = (Stage) logout.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        accountSettings.getStyleClass().add("whitebuttonmenu");
+        createAccount.getStyleClass().add("whitebuttonmenu");
+        manageRestaurant.getStyleClass().add("whitebuttonmenu");
+        logout.getStyleClass().add("whitebuttonmenu");
+
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack,spacer,accountSettings,createAccount, manageRestaurant, logout);
         userbtn.setOnMouseClicked(e -> {
             userBar.setVisible(true);
         });
