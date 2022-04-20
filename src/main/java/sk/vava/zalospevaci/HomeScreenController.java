@@ -1,6 +1,5 @@
 package sk.vava.zalospevaci;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.*;
 import java.net.http.HttpClient;
@@ -9,8 +8,6 @@ import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -26,12 +23,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Button;
-import org.w3c.dom.ls.LSOutput;
 
 public class HomeScreenController implements Initializable {
 
