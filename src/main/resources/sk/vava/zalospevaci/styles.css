@@ -97,6 +97,21 @@
     -fx-background-color: #919191;
 }
 
+.reviewitem{
+    -fx-background-radius: 15;
+    -fx-background-color: #adadad;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 24px;
+    -fx-min-height: 200px;
+    -fx-min-width: 900px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center-left;
+}
+
+.reviewitem:hover{
+    -fx-background-color: #919191;
+}
+
 .whitebutton{
     -fx-background-radius: 25;
     -fx-background-color: #ffffff;

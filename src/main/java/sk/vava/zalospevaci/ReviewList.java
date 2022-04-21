@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -30,11 +31,10 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-
-public class RestaurantMenuController implements Initializable {
+public class ReviewList implements Initializable {
 
     @FXML
-    private VBox menu;
+    private VBox reviews;
     @FXML
     private VBox restInfo;
 
@@ -42,6 +42,35 @@ public class RestaurantMenuController implements Initializable {
     private Button menubtn;
     @FXML
     private VBox menubar;
+
+    private static int page = 0;
+    private static int perpage = 2;
+    private static int elements = 0;
+    private static int totalpg = 0;
+    private static void setPerpage(int perpage){
+        ReviewList.perpage = perpage;
+    }
+    private static int getPerpage(){
+        return ReviewList.perpage;
+    }
+    private static void setPage(int page){
+        ReviewList.page = page;
+    }
+    private static int getPage(){
+        return ReviewList.page;
+    }
+    private static void setElements(int elements){
+        ReviewList.elements = elements;
+    }
+    private static int getElements(){
+        return ReviewList.elements;
+    }
+    private static void setTotalpg(int totalpg){
+        ReviewList.totalpg = totalpg;
+    }
+    private static int getTotalpg(){
+        return ReviewList.totalpg;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -68,18 +97,26 @@ public class RestaurantMenuController implements Initializable {
     }
 
     public void SetScreen(){
-        menu.setSpacing(25);
+        reviews.setSpacing(25);
+        reviews.getChildren().clear();
+        restInfo.getChildren().clear();
         menuBarF();
         JSONObject restaurantJson = JSONLoaded.getRestaurant();
         System.out.println(restaurantJson.getInt("id"));
-        JSONArray array = new JSONArray(getJSON("http://localhost:8080/items/"+restaurantJson.getInt("id")));
-        Text restaurantLabel = new Text("Menu");
+        JSONObject obj = new JSONObject(getJSON("http://localhost:8080/reviews?restaurant_id="+restaurantJson.getInt("id")+"&sort=desc&sort_by=createdAt&per_page="+getPerpage()+"&page="+getPage()));
+        JSONArray array = obj.getJSONArray("reviews");
+        JSONObject metadata = obj.getJSONObject("metadata");
+        setElements(metadata.getInt("total_elements"));
+        setTotalpg(metadata.getInt("total_pages"));
+        System.out.println(array.length());
+        if(array.length()==0){
+            setPage(getPage()-1);
+            obj = new JSONObject(getJSON("http://localhost:8080/reviews?restaurant_id="+restaurantJson.getInt("id")+"&sort=desc&sort_by=createdAt&per_page="+getPerpage()+"&page="+getPage()));
+            array = obj.getJSONArray("reviews");
+        }
+        Text restaurantLabel = new Text("Reviews");
         restaurantLabel.getStyleClass().add("label");
-        menu.getChildren().add(restaurantLabel);
-        Text currentPrice = new Text("Empty basket");
-        currentPrice.getStyleClass().add("itemname");
-        AtomicReference<Double> price = new AtomicReference<>((double) 0);
-        int[][] orderById = new int[array.length()][3];
+        reviews.getChildren().add(restaurantLabel);
         for(int i=0; i<array.length();i++){
             Image image = new Image("https://i.imgur.com/Tf3j0rU.jpg");
             Pane spacer1 = new Pane();
@@ -87,59 +124,27 @@ public class RestaurantMenuController implements Initializable {
             Pane spacer3 = new Pane();
             HBox itemMenu = new HBox(25);
             VBox texts = new VBox(5);
-            Button addToCart = new Button();
-            Button removeFromCart = new Button("-");
             JSONObject object = array.getJSONObject(i);
-            orderById[i][0] = object.getInt("id");
-            orderById[i][2] = object.getInt("price");
             HBox.setHgrow(spacer2, Priority.ALWAYS);
             spacer1.setPrefWidth(0);
             spacer3.setPrefWidth(0);
-            AtomicInteger amount = new AtomicInteger();
-            addToCart.setText((double) object.getInt("price")/100+"\u20ac");
-            addToCart.getStyleClass().add("whitebutton");
-            int finalI = i;
-            addToCart.setOnMouseClicked(e ->{
-                amount.addAndGet(1);
-                orderById[finalI][1] = amount.get();
-                JSONLoaded.setOrder(orderById);
-                price.updateAndGet(v -> v + (double) object.getInt("price"));
-                currentPrice.setText("In basket: " + price.get() / 100 +"\u20ac");
-                addToCart.setText(amount+"x "+(double) object.getInt("price")/100+"\u20ac");
-                removeFromCart.setVisible(true);
-            });
-
-            removeFromCart.getStyleClass().add("circlebutton");
-            removeFromCart.setVisible(false);
-            removeFromCart.setOnMouseClicked(e ->{
-                amount.addAndGet(-1);
-                orderById[finalI][1] = amount.get();
-                JSONLoaded.setOrder(orderById);
-                price.updateAndGet(v -> v - (double) object.getInt("price"));
-                currentPrice.setText("In basket: " + price.get() / 100 +"\u20ac");
-                addToCart.setText(amount+"x "+(double) object.getInt("price")/100+"\u20ac");
-                if(amount.get() == 0){
-                    if(price.get()==0) currentPrice.setText("Empty basket");
-                    addToCart.setText((double) object.getInt("price")/100+"\u20ac");
-                    removeFromCart.setVisible(false);
-                }
-            });
-
             ImageView imageView = new ImageView();
             imageView.setImage(image);
             imageView.setPreserveRatio(true);
-            imageView.setFitHeight(90);
+            imageView.setFitHeight(150);
 
-            Text itemName = new Text(object.getString("name"));
+            Text itemName = new Text(object.getString("username"));
             itemName.getStyleClass().add("itemname");
-            Text itemDesc = new Text(object.getString("description"));
+            Label itemDesc = new Label(object.getString("text"));
+            itemDesc.setWrapText(true);
             itemDesc.getStyleClass().add("itemdesc");
+            Text itemScore = new Text(object.getInt("score")+"/10");
+            itemScore.getStyleClass().add("itemname");
             texts.setAlignment(Pos.CENTER_LEFT);
             texts.getChildren().addAll(itemName,itemDesc);
-
-            itemMenu.getStyleClass().add("menuitem");
-            itemMenu.getChildren().addAll(spacer1,imageView,texts,spacer2,removeFromCart,addToCart,spacer3);
-            menu.getChildren().add(itemMenu);
+            itemMenu.getStyleClass().add("reviewitem");
+            itemMenu.getChildren().addAll(spacer1,imageView,texts,spacer2,itemScore,spacer3);
+            reviews.getChildren().add(itemMenu);
         }
 
         Pane spacer1 = new Pane();
@@ -169,44 +174,63 @@ public class RestaurantMenuController implements Initializable {
         Text ph = new Text(phoneNumber);
         ph.getStyleClass().add("itemnamephone");
 
-        Button reviews = new Button("Reviews");
-        Button checkout = new Button("Checkout");
-        reviews.getStyleClass().add("whitebuttonwide");
-        checkout.getStyleClass().add("blackbuttonwide");
-
-
-        reviews.setOnMouseClicked(e -> {
-            Stage stage = (Stage) reviews.getScene().getWindow();
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("reviewList.fxml")));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            assert root != null;
-            Scene scene = new Scene(root, 1280, 720);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
-            stage.setScene(scene);
+        Text ppg = new Text("Show " + getPerpage() + " items");
+        ppg.getStyleClass().add("itemnametext");
+        Button morepg = new Button("+");
+        morepg.setOnMouseClicked(event -> {
+            setPerpage(getPerpage()+1);
+            SetScreen();
         });
-
-        checkout.setOnMouseClicked(e -> {
-            Stage stage = (Stage) checkout.getScene().getWindow();
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("orderSummary.fxml")));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            assert root != null;
-            Scene scene = new Scene(root, 1280, 720);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
-            stage.setScene(scene);
+        morepg.getStyleClass().add("circlebutton");
+        Button lesspg = new Button("-");
+        lesspg.getStyleClass().add("circlebutton");
+        lesspg.setOnMouseClicked(event -> {
+            setPerpage(getPerpage()-1);
+            SetScreen();
         });
+        HBox perpgbtn = new HBox();
+        perpgbtn.setSpacing(5);
+        perpgbtn.getChildren().addAll(morepg,lesspg);
+        perpgbtn.setAlignment(Pos.CENTER);
+        if(getPerpage()==1) lesspg.setVisible(false);
+
+
+        Text pg = new Text("Page:" + (getPage()+1));
+        pg.getStyleClass().add("itemnametext");
+        Button nextpg = new Button("+");
+        nextpg.setOnMouseClicked(event -> {
+            setPage(getPage()+1);
+            SetScreen();
+        });
+        HBox pgbtn = new HBox();
+        pgbtn.setSpacing(5);
+        Button prevpg = new Button("-");
+        prevpg.setOnMouseClicked(event -> {
+            setPage(getPage()-1);
+            SetScreen();
+        });
+        prevpg.getStyleClass().add("circlebutton");
+        if(getPage()==0){
+            prevpg.setVisible(false);
+        }
+        if(getPage()==getTotalpg()-1){
+            nextpg.setVisible(false);
+        }
+
+        nextpg.getStyleClass().add("circlebutton");
+        pgbtn.getChildren().addAll(nextpg,prevpg);
+        pgbtn.setAlignment(Pos.CENTER);
+
 
         restInfo.setSpacing(20);
         restInfo.setAlignment(Pos.TOP_CENTER);
-        restInfo.getChildren().addAll(spacer1,rImageView,rN,addr,ph,spacer3,currentPrice,reviews,checkout,spacer2);
-
+        if(getPerpage()==getElements()){
+            morepg.setVisible(false);
+            restInfo.getChildren().addAll(spacer1,rImageView,rN,addr,ph,spacer3,ppg,perpgbtn,spacer2);
+        }
+        else{
+            restInfo.getChildren().addAll(spacer1,rImageView,rN,addr,ph,spacer3,ppg,perpgbtn,pg,pgbtn,spacer2);
+        }
     }
 
     public void menuBarF(){
