@@ -41,6 +41,45 @@ public class RegisterController implements Initializable {
     private boolean successful;
 
     public String handleRegister(String url, String username, String password, String email, boolean isManager, String countryCode, String number){
+        if (username == "" || password == "" || email == "" || countryCode == "" || number == "") {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Empty fields");
+            alert.setHeaderText("Empty fields");
+            alert.setContentText("Please fill all fields");
+            alert.showAndWait();
+            return null;
+        }
+
+        //check if email is in correct format
+        if (!email.contains("@") || !email.contains(".")) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid email");
+            alert.setHeaderText("Invalid email");
+            alert.setContentText("Please enter a valid email");
+            alert.showAndWait();
+            return null;
+        }
+
+        //check if number is in correct format
+        if (!number.matches("[0-9]+") || number.length() != 9) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid number");
+            alert.setHeaderText("Invalid number");
+            alert.setContentText("Please enter a valid number");
+            alert.showAndWait();
+            return null;
+        }
+
+        //check if country code is in correct format
+        if (!countryCode.matches("\\+[0-9]+") || countryCode.length() > 4) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid country code");
+            alert.setHeaderText("Invalid country code");
+            alert.setContentText("Please enter a valid country code");
+            alert.showAndWait();
+            return null;
+        }
+
         JSONObject requestB = new JSONObject();
         requestB.put("username", username);
         requestB.put("password", password);
@@ -72,7 +111,10 @@ public class RegisterController implements Initializable {
         try {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if(response.statusCode() == 201){ successful = true; }
-            System.out.println(response.statusCode());
+            else {
+                System.out.println(response.statusCode());
+                System.out.println(response.body());
+            }
             return response.body();
         } catch (InterruptedException | IOException e) {
             return "ERROR";
@@ -131,7 +173,7 @@ public class RegisterController implements Initializable {
         email.setPrefWidth(360);
         email.setMaxWidth(360);
 
-        TextField password = new TextField();
+        PasswordField password = new PasswordField();
         password.getStyleClass().add("formInput");
         password.setPromptText("password");
         password.setPrefWidth(360);
@@ -160,6 +202,8 @@ public class RegisterController implements Initializable {
         ToggleGroup radioGroup = new ToggleGroup();
         user.setToggleGroup(radioGroup);
         manager.setToggleGroup(radioGroup);
+
+        user.setSelected(true);
 
         Button registerButton = new Button("Create");
         registerButton.getStyleClass().add("formButton");
