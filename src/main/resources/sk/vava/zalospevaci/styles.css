@@ -291,7 +291,6 @@
     -fx-font-family: "Roboto Slab ExtraBold";
     -fx-font-size: 16px;
     -fx-min-height: 30px;
-    -fx-width: 200px;
     -fx-alignment: center-left;
 }
 
@@ -327,6 +326,26 @@
 
 .altButton:pressed{
     -fx-text-fill: #696969;
+}
+
+.profileButton {
+    -fx-background-radius: 24;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+    -fx-font-family: 'Roboto Slab';
+    -fx-font-size: 12px;
+    -fx-min-height: 25px;
+    -fx-min-width: 80px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.profileButton:hover{
+    -fx-background-color: #e0e0e0;
+}
+
+.profileButton:pressed{
+    -fx-background-color: #a8a8a8;
 }
 
 #menubtn {

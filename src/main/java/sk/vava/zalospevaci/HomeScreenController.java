@@ -100,7 +100,7 @@ public class HomeScreenController implements Initializable {
                 }
             }
         } else {
-            userBarF();
+            guestBarF();
         }
 
         menuBarF();
@@ -197,7 +197,7 @@ public class HomeScreenController implements Initializable {
         });
     }
 
-    public void userBarF() {
+    public void guestBarF() {
         userBar.getStyleClass().add("menubar");
         userBar.setVisible(false);
         userBar.setSpacing(20);
@@ -285,6 +285,20 @@ public class HomeScreenController implements Initializable {
         userImage.setFitHeight(130);
         userImage.setFitWidth(130);
         userImage.setPreserveRatio(true);
+
+        accountSettings.setOnMouseClicked(e -> {
+            Stage stage = (Stage) accountSettings.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("profile.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
 
         logout.setOnMouseClicked(e -> {
             JSONLoaded.setUser(null);
