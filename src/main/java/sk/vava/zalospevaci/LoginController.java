@@ -72,7 +72,7 @@ public class LoginController implements Initializable  {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if(response.statusCode() == 200){
-                JSONObject user = new JSONObject(response.body());
+                JSONObject user = new JSONObject(response.body()).put("name", username);
                 JSONLoaded.setUser(user);
                 return response.body();
             }

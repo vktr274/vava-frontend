@@ -1,28 +1,26 @@
 package sk.vava.zalospevaci;
 
 public class User {
+    int id;
     String username;
     String email;
     String role;
-    String phone;
-    String addressName;
-    String street;
-    int buildingNumber;
-    String city;
-    String state;
-    String postcode;
+    boolean blocked;
+    Address address;
+    Phone phone;
 
-    public User(String username, String email, String role, String phone, String addressName, String street, int buildingNumber, String city, String state, String postcode) {
+    public User(int id, String username, String email, String role, boolean blocked, Address address, Phone phone) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.role = role;
+        this.blocked = blocked;
+        this.address = address;
         this.phone = phone;
-        this.addressName = addressName;
-        this.street = street;
-        this.buildingNumber = buildingNumber;
-        this.city = city;
-        this.state = state;
-        this.postcode = postcode;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -37,32 +35,20 @@ public class User {
         return role;
     }
 
-    public String getPhone() {
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public Phone getPhone() {
         return phone;
     }
 
-    public String getAddressName() {
-        return addressName;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public int getBuildingNumber() {
-        return buildingNumber;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public String getPostcode() {
-        return postcode;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setUsername(String username) {
@@ -77,31 +63,16 @@ public class User {
         this.role = role;
     }
 
-    public void setPhone(String phone) {
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public void setPhone(Phone phone) {
         this.phone = phone;
     }
 
-    public void setAddressName(String addressName) {
-        this.addressName = addressName;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public void setBuildingNumber(int buildingNumber) {
-        this.buildingNumber = buildingNumber;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public void setPostcode(String postcode) {
-        this.postcode = postcode;
-    }
 }

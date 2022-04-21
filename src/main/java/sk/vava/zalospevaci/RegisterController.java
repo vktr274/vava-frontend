@@ -92,7 +92,7 @@ public class RegisterController implements Initializable {
         }
 
         requestB.put("phone", new JSONObject().put("country_code", countryCode).put("number", number));
-        requestB.put("address", new JSONObject().put("name", "Not Set").put("street","Not Set").put("building_number", "0").put("city", "Not Set").put("state", "Not Set").put("postcode","0"));
+        requestB.put("address", JSONObject.NULL);
 
         HttpRequest request = null;
         try {

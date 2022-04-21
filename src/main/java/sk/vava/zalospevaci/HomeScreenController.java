@@ -1,5 +1,6 @@
 package sk.vava.zalospevaci;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.net.http.HttpClient;
@@ -72,6 +73,28 @@ public class HomeScreenController implements Initializable {
 
         if (user != null) {
             if(!Objects.equals(user.getString("token"), "")){
+                String userString = getJSON("http://localhost:8080/users/" + user.getString("name"));
+                JSONObject userJSON = new JSONObject(userString);
+
+                JSONObject addressJSON;
+                try {
+                    addressJSON = userJSON.getJSONObject("address");
+                } catch (Exception e) {
+                    addressJSON = null;
+                }
+
+                Address address;
+                if (addressJSON != null) {
+                    address = new Address(addressJSON.getInt("id"), addressJSON.getString("name"), addressJSON.getString("street"), addressJSON.getString("city"), addressJSON.getString("state"), addressJSON.getString("postcode"), addressJSON.getString("building_number"));
+                } else
+                    address = null;
+
+                JSONObject phoneJSON = userJSON.getJSONObject("phone");
+                Phone phone = new Phone(phoneJSON.getInt("id"), phoneJSON.getString("number"), phoneJSON.getString("country_code"));
+
+                User activeUser = new User(userJSON.getInt("id"), userJSON.getString("username"), userJSON.getString("email"), userJSON.getString("role"), userJSON.getBoolean("blocked"), address, phone);
+                JSONLoaded.setActiveUser(activeUser);
+
                 if(Objects.equals(user.getString("role"), "manager")) {
                     userBarManagerF();
                 }
@@ -180,7 +203,20 @@ public class HomeScreenController implements Initializable {
         userBar.setSpacing(20);
         Button goBack = new Button("\uD83E\uDC14 Close");
         Pane spacer = new Pane();
-        spacer.setPrefHeight(200);
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(40);
+        spacer2.setPrefHeight(30);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text("Guest");
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
         Button login = new Button("Login");
         Button register = new Button("Register");
 
@@ -215,7 +251,7 @@ public class HomeScreenController implements Initializable {
         login.getStyleClass().add("whitebuttonmenu");
         register.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
-        userBar.getChildren().addAll(goBack,spacer,login,register);
+        userBar.getChildren().addAll(goBack, spacer, userImage, userName,spacer2, login,register);
         userbtn.setOnMouseClicked(e -> {
             userBar.setVisible(true);
         });
@@ -229,15 +265,30 @@ public class HomeScreenController implements Initializable {
         userBar.setVisible(false);
         userBar.setSpacing(20);
         Button goBack = new Button("\uD83E\uDC14 Close");
-        Pane spacer = new Pane();
-        spacer.setPrefHeight(200);
         Button accountSettings = new Button("Account Settings");
-        Button createAccount = new Button("Create Account");
         Button manageRestaurant = new Button("Manage Restaurant");
         Button logout = new Button("Logout");
 
+        System.out.println(JSONLoaded.getActiveUser().username);
+
+        Pane spacer = new Pane();
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(20);
+        spacer2.setPrefHeight(15);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text(JSONLoaded.getActiveUser().username);
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
         logout.setOnMouseClicked(e -> {
             JSONLoaded.setUser(null);
+            JSONLoaded.setActiveUser(null);
             Stage stage = (Stage) logout.getScene().getWindow();
             Parent root = null;
             try {
@@ -252,12 +303,11 @@ public class HomeScreenController implements Initializable {
         });
 
         accountSettings.getStyleClass().add("whitebuttonmenu");
-        createAccount.getStyleClass().add("whitebuttonmenu");
         manageRestaurant.getStyleClass().add("whitebuttonmenu");
         logout.getStyleClass().add("whitebuttonmenu");
 
         goBack.getStyleClass().add("backbutton");
-        userBar.getChildren().addAll(goBack,spacer,accountSettings,createAccount, manageRestaurant, logout);
+        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
         userbtn.setOnMouseClicked(e -> {
             userBar.setVisible(true);
         });
