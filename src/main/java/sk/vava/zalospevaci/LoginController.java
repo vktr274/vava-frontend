@@ -6,7 +6,9 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -62,19 +64,25 @@ public class LoginController implements Initializable  {
                     .header("Content-Type", "application/json")
                     .build();
         } catch (URISyntaxException e) {
-            e.printStackTrace();
             return "ERROR";
         }
 
         HttpResponse<String> response;
         try {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            JSONObject user = new JSONObject(response.body());
-            JSONLoaded.setUser(user);
-            return response.body();
+
+            if(response.statusCode() == 200){
+                JSONObject user = new JSONObject(response.body());
+                JSONLoaded.setUser(user);
+                return response.body();
+            }
+            else{
+                System.out.println(response.statusCode());
+            }
         } catch (InterruptedException | IOException e) {
             return "ERROR";
         }
+        return "ERROR";
     }
 
     public void loginScreen(){
@@ -123,7 +131,7 @@ public class LoginController implements Initializable  {
         username.setPrefWidth(360);
         username.setMaxWidth(360);
 
-        TextField password = new TextField();
+        PasswordField password = new PasswordField();
         password.getStyleClass().add("formInput");
         password.setPromptText("Password...");
         password.setPrefWidth(360);
@@ -135,7 +143,7 @@ public class LoginController implements Initializable  {
         loginButton.setOnMouseClicked(e -> {
             handleLogin("http://localhost:8080/token", username.getText(), password.getText());
             JSONObject user = JSONLoaded.getUser();
-            if (!Objects.equals(user.getString("token"), "")) {
+            if (user != null && !Objects.equals(user.getString("token"), "")) {
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 Parent root = null;
                 try {
@@ -147,6 +155,13 @@ public class LoginController implements Initializable  {
                 Scene scene = new Scene(root, 1280, 720);
                 scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
                 stage.setScene(scene);
+            }
+            else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Invalid Credentials");
+                alert.setContentText("Please check your username and password and try again.");
+                alert.showAndWait();
             }
         });
 
