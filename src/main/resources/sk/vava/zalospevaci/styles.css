@@ -236,6 +236,48 @@
     -fx-background-color: #696969;
 }
 
+
+.textareareview {
+    -fx-background-radius: 20;
+    -fx-background-color: #9f9f9f;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-min-height: 300px;
+    -fx-width: 900px;
+    -fx-alignment: center-left;
+    -fx-border-color: #fff;
+    -fx-border-width: 0;
+    -fx-border-image-width: 0;
+}
+
+.textareareview .content{
+    -fx-background-radius: 20;
+    -fx-background-color: #9f9f9f;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-min-height: 300px;
+    -fx-width: 900px;
+    -fx-alignment: center-left;
+    -fx-border-color: #fff;
+    -fx-border-width: 0;
+    -fx-border-image-width: 0;
+}
+
+.textareareview .scroll-bar:vertical {
+    -fx-pref-width: 1;
+    -fx-opacity: 0;
+}
+
+.slider .track {
+    -fx-control-inner-background: gray;
+}
+.slider{
+    -fx-color: black;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
 .brandLabel {
     -fx-font-family: "Roboto Slab ExtraBold";
     -fx-font-size: 40px;
