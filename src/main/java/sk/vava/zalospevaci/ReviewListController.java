@@ -28,10 +28,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class ReviewList implements Initializable {
+public class ReviewListController implements Initializable {
 
     @FXML
     private VBox reviews;
@@ -48,28 +46,28 @@ public class ReviewList implements Initializable {
     private static int elements = 0;
     private static int totalpg = 0;
     private static void setPerpage(int perpage){
-        ReviewList.perpage = perpage;
+        ReviewListController.perpage = perpage;
     }
     private static int getPerpage(){
-        return ReviewList.perpage;
+        return ReviewListController.perpage;
     }
     private static void setPage(int page){
-        ReviewList.page = page;
+        ReviewListController.page = page;
     }
     private static int getPage(){
-        return ReviewList.page;
+        return ReviewListController.page;
     }
     private static void setElements(int elements){
-        ReviewList.elements = elements;
+        ReviewListController.elements = elements;
     }
     private static int getElements(){
-        return ReviewList.elements;
+        return ReviewListController.elements;
     }
     private static void setTotalpg(int totalpg){
-        ReviewList.totalpg = totalpg;
+        ReviewListController.totalpg = totalpg;
     }
     private static int getTotalpg(){
-        return ReviewList.totalpg;
+        return ReviewListController.totalpg;
     }
 
     @Override
@@ -109,7 +107,7 @@ public class ReviewList implements Initializable {
         setElements(metadata.getInt("total_elements"));
         setTotalpg(metadata.getInt("total_pages"));
         System.out.println(array.length());
-        if(array.length()==0){
+        if(array.length()==0 && getElements()>0){
             setPage(getPage()-1);
             obj = new JSONObject(getJSON("http://localhost:8080/reviews?restaurant_id="+restaurantJson.getInt("id")+"&sort=desc&sort_by=createdAt&per_page="+getPerpage()+"&page="+getPage()));
             array = obj.getJSONArray("reviews");
@@ -146,7 +144,23 @@ public class ReviewList implements Initializable {
             itemMenu.getChildren().addAll(spacer1,imageView,texts,spacer2,itemScore,spacer3);
             reviews.getChildren().add(itemMenu);
         }
-
+        Button addReview = new Button();
+        addReview.setText("Add Review");
+        addReview.getStyleClass().add("whitebutton");
+        addReview.setOnMouseClicked(event -> {
+            Stage stage = (Stage) addReview.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("reviewAdd.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+        reviews.getChildren().add(addReview);
         Pane spacer1 = new Pane();
         spacer1.setPrefHeight(0);
         Pane spacer2 = new Pane();
@@ -194,7 +208,6 @@ public class ReviewList implements Initializable {
         perpgbtn.setAlignment(Pos.CENTER);
         if(getPerpage()==1) lesspg.setVisible(false);
 
-
         Text pg = new Text("Page:" + (getPage()+1));
         pg.getStyleClass().add("itemnametext");
         Button nextpg = new Button("+");
@@ -231,9 +244,17 @@ public class ReviewList implements Initializable {
         else{
             restInfo.getChildren().addAll(spacer1,rImageView,rN,addr,ph,spacer3,ppg,perpgbtn,pg,pgbtn,spacer2);
         }
+        if(getElements()==0){
+            perpgbtn.setVisible(false);
+            pgbtn.setVisible(false);
+            ppg.setVisible(false);
+            pg.setVisible(false);
+            restaurantLabel.setText("Reviews - No reviews yet, be first to add one");
+        }
     }
 
     public void menuBarF(){
+        menubar.getChildren().clear();
         menubar.getStyleClass().add("menubar");
         menubar.setVisible(false);
         menubar.setSpacing(20);
