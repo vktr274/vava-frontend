@@ -36,6 +36,7 @@ public class RestaurantListController implements Initializable {
     @FXML
     private VBox restFilt;
 
+    //FILTERS
     private static int page = 0;
     private static int perpage = 4;
     private static int elements = 0;
@@ -43,6 +44,13 @@ public class RestaurantListController implements Initializable {
     private static String ascending = "asc";
     private static String city = "";
     private static String name = "";
+    private static String blocked = "false";
+    private static void setBlocked(String blocked){
+        RestaurantListController.blocked = blocked;
+    }
+    private static String getBlocked(){
+        return RestaurantListController.blocked;
+    }
     private static void setCity(String city){
         RestaurantListController.city = city;
     }
@@ -107,10 +115,14 @@ public class RestaurantListController implements Initializable {
     }
 
     public void restaurantSetScreen(){
+        if(JSONLoaded.getActiveUser() != null){
+            if(!Objects.equals(JSONLoaded.getActiveUser().role, "admin")) setBlocked("false");
+        }
+        else setBlocked("false");
         tree.setSpacing(25);
         tree.getChildren().clear();
         restFilt.getChildren().clear();
-        JSONObject full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()));
+        JSONObject full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
         JSONObject metadata = full.getJSONObject("metadata");
         JSONArray array = full.getJSONArray("reviews");
         setElements(metadata.getInt("total_elements"));
@@ -120,7 +132,7 @@ public class RestaurantListController implements Initializable {
         tree.getChildren().add(restaurantLabel);
         if(array.length()==0 && getElements()>0){
             setPage(getPage()-1);
-            full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()));
+            full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
             array = full.getJSONArray("reviews");
         }
         menuBarF();
@@ -182,6 +194,22 @@ public class RestaurantListController implements Initializable {
 
             tree.getChildren().add(restaurant);
         }
+
+        Button blockbtn = new Button();
+        blockbtn.getStyleClass().add("whitebuttonwide");
+        if(getBlocked().equals("false")) blockbtn.setText("Blocked hidden");
+        if(getBlocked().equals("true")) blockbtn.setText("Blocked shown");
+        if(getBlocked().equals("")) blockbtn.setText("All shown");
+        blockbtn.setOnMouseClicked(event -> {
+            if(getBlocked().equals("false")) setBlocked("true");
+            else if(getBlocked().equals("true")) setBlocked("");
+            else if(getBlocked().equals("")) setBlocked("false");
+            restaurantSetScreen();
+        });
+        if(JSONLoaded.getActiveUser() != null){
+            if(!Objects.equals(JSONLoaded.getActiveUser().role, "admin")) blockbtn.setVisible(false);
+        }
+        else blockbtn.setVisible(false);
 
         Button asc = new Button();
         asc.getStyleClass().add("whitebuttonwide");
@@ -283,15 +311,15 @@ public class RestaurantListController implements Initializable {
         Pane spacer3 = new Pane();
         VBox.setVgrow(spacer3, Priority.ALWAYS);
 
-        restFilt.setSpacing(20);
+        restFilt.setSpacing(15);
         restFilt.setAlignment(Pos.TOP_CENTER);
 
         if(getPerpage()==getElements()){
             morepg.setVisible(false);
-            restFilt.getChildren().addAll(spacer1,asc,restname,city,apply,reset,spacer3,ppg,perpgbtn,spacer2);
+            restFilt.getChildren().addAll(spacer1,asc,restname,city,apply,reset,blockbtn,spacer3,ppg,perpgbtn,spacer2);
         }
         else{
-            restFilt.getChildren().addAll(spacer1,asc,restname,city,apply,reset,spacer3,ppg,perpgbtn,pg,pgbtn,spacer2);
+            restFilt.getChildren().addAll(spacer1,asc,restname,city,apply,reset,spacer3,blockbtn,ppg,perpgbtn,pg,pgbtn,spacer2);
         }
         if(getElements()==0){
             perpgbtn.setVisible(false);
