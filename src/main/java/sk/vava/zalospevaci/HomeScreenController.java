@@ -69,7 +69,7 @@ public class HomeScreenController implements Initializable {
 
     public void homeScreen(){
         JSONObject full = new JSONObject(getJSON("http://localhost:8080/restaurants"));
-        JSONArray restaurantsArray = full.getJSONArray("reviews");
+        JSONArray restaurantsArray = full.getJSONArray("restaurants");
         JSONObject user = JSONLoaded.getUser();
 
         if (user != null) {

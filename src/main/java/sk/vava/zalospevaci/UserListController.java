@@ -25,7 +25,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.json.*;
 
-public class RestaurantListController implements Initializable {
+public class UserListController implements Initializable {
 
     @FXML
     private VBox tree;
@@ -42,52 +42,52 @@ public class RestaurantListController implements Initializable {
     private static int elements = 0;
     private static int totalpg = 0;
     private static String ascending = "asc";
-    private static String city = "";
+    private static String role = "";
     private static String name = "";
     private static String blocked = "false";
     private static void setBlocked(String blocked){
-        RestaurantListController.blocked = blocked;
+        UserListController.blocked = blocked;
     }
     private static String getBlocked(){
-        return RestaurantListController.blocked;
+        return UserListController.blocked;
     }
-    private static void setCity(String city){
-        RestaurantListController.city = city;
+    private static void setRole(String role){
+        UserListController.role = role;
     }
-    private static String getCity(){
-        return  RestaurantListController.city;
+    private static String getRole(){
+        return  UserListController.role;
     }
     private static void setName(String name){
-        RestaurantListController.name = name;
+        UserListController.name = name;
     }
     private static String getName(){
-        return RestaurantListController.name;
+        return UserListController.name;
     }
-    private static void setAscending(String asc){ RestaurantListController.ascending = asc;}
-    private static String getAscending(){return RestaurantListController.ascending;}
+    private static void setAscending(String asc){ UserListController.ascending = asc;}
+    private static String getAscending(){return UserListController.ascending;}
     private static void setPerpage(int perpage){
-        RestaurantListController.perpage = perpage;
+        UserListController.perpage = perpage;
     }
     private static int getPerpage(){
-        return RestaurantListController.perpage;
+        return UserListController.perpage;
     }
     private static void setPage(int page){
-        RestaurantListController.page = page;
+        UserListController.page = page;
     }
     private static int getPage(){
-        return RestaurantListController.page;
+        return UserListController.page;
     }
     private static void setElements(int elements){
-        RestaurantListController.elements = elements;
+        UserListController.elements = elements;
     }
     private static int getElements(){
-        return RestaurantListController.elements;
+        return UserListController.elements;
     }
     private static void setTotalpg(int totalpg){
-        RestaurantListController.totalpg = totalpg;
+        UserListController.totalpg = totalpg;
     }
     private static int getTotalpg(){
-        return RestaurantListController.totalpg;
+        return UserListController.totalpg;
     }
 
     @Override
@@ -99,13 +99,14 @@ public class RestaurantListController implements Initializable {
         HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
         HttpRequest request = null;
         try {
-            request = HttpRequest.newBuilder().uri(new URI(url)).GET().build();
+            request = HttpRequest.newBuilder().uri(new URI(url)).GET().setHeader("auth",JSONLoaded.getUser().getString("token")).build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
             return response.body();
         }  catch (InterruptedException | IOException e) {
             e.printStackTrace();
@@ -122,22 +123,21 @@ public class RestaurantListController implements Initializable {
         tree.setSpacing(25);
         tree.getChildren().clear();
         restFilt.getChildren().clear();
-        JSONObject full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
+        JSONObject full = new JSONObject(getJSON("http://localhost:8080/users?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&role="+getRole()+"&blocked="+getBlocked()));
         JSONObject metadata = full.getJSONObject("metadata");
-        JSONArray array = full.getJSONArray("restaurants");
+        JSONArray array = full.getJSONArray("users");
         setElements(metadata.getInt("total_elements"));
         setTotalpg(metadata.getInt("total_pages"));
-        Text restaurantLabel = new Text("Restaurants");
+        Text restaurantLabel = new Text("Users");
         restaurantLabel.getStyleClass().add("label");
         tree.getChildren().add(restaurantLabel);
         if(array.length()==0 && getElements()>0){
             setPage(getPage()-1);
-            full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
-            array = full.getJSONArray("restaurants");
+            full = new JSONObject(getJSON("http://localhost:8080/users?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&role="+getRole()+"&blocked="+getBlocked()));
+            array = full.getJSONArray("users");
         }
         menuBarF();
         for(int i=0; i<array.length();i++){
-            Image image = new Image("https://i.imgur.com/Tf3j0rU.jpg");
             Pane spacer1 = new Pane();
             Pane spacer2 = new Pane();
             Pane spacer3 = new Pane();
@@ -160,21 +160,8 @@ public class RestaurantListController implements Initializable {
             delete.setText("Remove");
             delete.getStyleClass().add("whitebutton");
 
-            ImageView imageView = new ImageView();
-            imageView.setImage(image);
-            imageView.setPreserveRatio(true);
-            imageView.setFitHeight(90);
-
             restaurant.getStyleClass().add("itembutton");
-            if(JSONLoaded.getActiveUser() != null){
-                if(JSONLoaded.getActiveUser().role.equals("admin")){
-                    restaurant.getChildren().addAll(spacer1,imageView,new Text(object.getString("name")),spacer2,block,delete,spacer3);
-                }
-                else if (JSONLoaded.getActiveUser().role.equals("guest") || JSONLoaded.getActiveUser().role.equals("manager")){
-                    restaurant.getChildren().addAll(spacer1,imageView,new Text(object.getString("name")),spacer2,addReview,spacer3);
-                }
-            }
-            else restaurant.getChildren().addAll(spacer1,imageView,new Text(object.getString("name")),spacer2,spacer3);
+            restaurant.getChildren().addAll(spacer1,new Text(object.getString("username")),spacer2,block,delete,spacer3);
 
 
             restaurant.setOnMouseClicked(e -> {
@@ -206,10 +193,6 @@ public class RestaurantListController implements Initializable {
             else if(getBlocked().equals("")) setBlocked("false");
             restaurantSetScreen();
         });
-        if(JSONLoaded.getActiveUser() != null){
-            if(!Objects.equals(JSONLoaded.getActiveUser().role, "admin")) blockbtn.setVisible(false);
-        }
-        else blockbtn.setVisible(false);
 
         Button asc = new Button();
         asc.getStyleClass().add("whitebuttonwide");
@@ -230,31 +213,51 @@ public class RestaurantListController implements Initializable {
             }
         });
 
-        TextField city = new TextField();
-        city.getStyleClass().add("whitebuttonwide");
-        city.setPromptText("City");
-        city.setMaxWidth(250);
+
+        Button role = new Button();
+        role.getStyleClass().add("whitebuttonwide");
+        if(getRole().equals("guest")){
+            role.setText("Showing users");
+            restaurantLabel.setText("Users - Only users");
+        }
+        if(getRole().equals("manager")){
+            role.setText("Showing managers");
+            restaurantLabel.setText("Users - Only managers");
+        }
+        if(getRole().equals("admin")){
+            role.setText("Showing admins");
+            restaurantLabel.setText("Users - Only admins");
+        }
+        if(getRole().equals("")){
+            role.setText("All shown");
+            restaurantLabel.setText("Users - All");
+        }
+        role.setOnMouseClicked(event -> {
+            if(getRole().equals("guest")) setRole("manager");
+            else if(getRole().equals("manager")) setRole("admin");
+            else if(getRole().equals("admin")) setRole("");
+            else if(getRole().equals("")) setRole("guest");
+            restaurantSetScreen();
+        });
 
         TextField restname = new TextField();
         restname.getStyleClass().add("whitebuttonwide");
-        restname.setPromptText("Restaurant name");
+        restname.setPromptText("User Name");
         restname.setMaxWidth(250);
 
         Button apply = new Button("Apply filters");
         apply.getStyleClass().add("blackbuttonwide");
         apply.setOnMouseClicked(event -> {
-            setCity(city.getText());
             setName(restname.getText());
             restaurantSetScreen();
         });
         Button reset = new Button("Reset filters");
         reset.getStyleClass().add("whitebuttonwide");
         reset.setOnMouseClicked(event -> {
-            setCity("");
             setName("");
             restaurantSetScreen();
         });
-        if(getCity().equals("") && getName().equals("")){
+        if(getName().equals("")){
             reset.setVisible(false);
         }
 
@@ -316,10 +319,10 @@ public class RestaurantListController implements Initializable {
 
         if(getPerpage()>=getElements()){
             morepg.setVisible(false);
-            restFilt.getChildren().addAll(spacer1,asc,restname,city,apply,reset,blockbtn,spacer3,ppg,perpgbtn,spacer2);
+            restFilt.getChildren().addAll(spacer1,asc,role,restname,apply,reset,blockbtn,spacer3,ppg,perpgbtn,spacer2);
         }
         else{
-            restFilt.getChildren().addAll(spacer1,asc,restname,city,apply,reset,spacer3,blockbtn,ppg,perpgbtn,pg,pgbtn,spacer2);
+            restFilt.getChildren().addAll(spacer1,asc,role,restname,apply,reset,spacer3,blockbtn,ppg,perpgbtn,pg,pgbtn,spacer2);
         }
         if(getElements()==0){
             perpgbtn.setVisible(false);
