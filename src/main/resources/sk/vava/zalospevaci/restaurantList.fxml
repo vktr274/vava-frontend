@@ -34,6 +34,7 @@
                    </content>
                 </ScrollPane>
              </children>
+              <VBox fx:id="restFilt" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" style="-fx-background-color: #afafaf" />
           </GridPane>
        </children>
     </VBox>

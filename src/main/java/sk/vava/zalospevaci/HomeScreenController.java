@@ -68,7 +68,8 @@ public class HomeScreenController implements Initializable {
     }
 
     public void homeScreen(){
-        JSONArray restaurantsArray = new JSONArray(getJSON("http://localhost:8080/restaurants"));
+        JSONObject full = new JSONObject(getJSON("http://localhost:8080/restaurants"));
+        JSONArray restaurantsArray = full.getJSONArray("reviews");
         JSONObject user = JSONLoaded.getUser();
 
         if (user != null) {
@@ -270,6 +271,7 @@ public class HomeScreenController implements Initializable {
         Button logout = new Button("Logout");
 
         System.out.println(JSONLoaded.getActiveUser().username);
+        System.out.println(JSONLoaded.getActiveUser().role);
 
         Pane spacer = new Pane();
         Pane spacer2 = new Pane();

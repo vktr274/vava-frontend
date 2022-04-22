@@ -43,6 +43,7 @@ public class RestaurantMenuController implements Initializable {
     @FXML
     private VBox menubar;
 
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         SetScreen();
@@ -202,6 +203,7 @@ public class RestaurantMenuController implements Initializable {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
             stage.setScene(scene);
         });
+
 
         restInfo.setSpacing(20);
         restInfo.setAlignment(Pos.TOP_CENTER);

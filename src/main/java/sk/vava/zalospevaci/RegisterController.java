@@ -88,12 +88,11 @@ public class RegisterController implements Initializable {
         if (isManager) {
             requestB.put("role", "manager");
         } else {
-            requestB.put("role", "user");
+            requestB.put("role", "guest");
         }
 
         requestB.put("phone", new JSONObject().put("country_code", countryCode).put("number", number));
         requestB.put("address", JSONObject.NULL);
-
         HttpRequest request = null;
         try {
             request = HttpRequest.newBuilder()
