@@ -36,6 +36,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -65,8 +66,18 @@ public class ReviewAddController implements Initializable {
         return ReviewAddController.imgfile;
     }
 
+    private static ResourceBundle lang;
+    private void setLang(ResourceBundle lang){
+        ReviewAddController.lang = lang;
+    }
+    private ResourceBundle getLang(){
+        return ReviewAddController.lang;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale("sk", "SK"));
+        setLang(lngBndl);
         SetScreen();
     }
 
@@ -80,11 +91,11 @@ public class ReviewAddController implements Initializable {
         System.out.println(restaurantJson.getInt("id"));
         Text restaurantLabel = new Text(restaurantJson.getString("name"));
         restaurantLabel.getStyleClass().add("label");
-        Text revLabel = new Text("Review text");
+        Text revLabel = new Text(getLang().getString("revtext"));
         revLabel.getStyleClass().add("label");
         TextArea revText = new TextArea();
         revText.setWrapText(true);
-        revText.setPromptText("Write your review here...");
+        revText.setPromptText(getLang().getString("revhere"));
         revText.getStyleClass().add("textareareview");
         Slider stars = new Slider(1, 10, 1);
         stars.setOrientation(Orientation.HORIZONTAL);
@@ -101,17 +112,15 @@ public class ReviewAddController implements Initializable {
         spacer2.setPrefHeight(0);
         Pane spacer3 = new Pane();
         VBox.setVgrow(spacer3, Priority.ALWAYS);
-        Image restaurantImage = new Image("https://i.imgur.com/Tf3j0rU.jpg");
         ImageView rImageView = new ImageView();
-        rImageView.setImage(restaurantImage);
         rImageView.setPreserveRatio(true);
         rImageView.setFitWidth(250);
 
-        Button addImg = new Button("Add Image");
+        Button addImg = new Button(getLang().getString("addimg"));
         addImg.getStyleClass().add("whitebuttonwide");
-        Button discard = new Button("Discard");
+        Button discard = new Button(getLang().getString("discard"));
         discard.getStyleClass().add("whitebuttonwide");
-        Button save = new Button("Save");
+        Button save = new Button(getLang().getString("save"));
         save.getStyleClass().add("blackbuttonwide");
 
         addImg.setOnMouseClicked(event -> {

@@ -26,6 +26,7 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -70,8 +71,18 @@ public class ReviewListController implements Initializable {
         return ReviewListController.totalpg;
     }
 
+    private static ResourceBundle lang;
+    private void setLang(ResourceBundle lang){
+        ReviewListController.lang = lang;
+    }
+    private ResourceBundle getLang(){
+        return ReviewListController.lang;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale("sk", "SK"));
+        setLang(lngBndl);
         SetScreen();
     }
 
@@ -112,7 +123,7 @@ public class ReviewListController implements Initializable {
             obj = new JSONObject(getJSON("http://localhost:8080/reviews?restaurant_id="+restaurantJson.getInt("id")+"&sort=desc&sort_by=createdAt&per_page="+getPerpage()+"&page="+getPage()));
             array = obj.getJSONArray("reviews");
         }
-        Text restaurantLabel = new Text("Reviews");
+        Text restaurantLabel = new Text(getLang().getString("reviews"));
         restaurantLabel.getStyleClass().add("label");
         reviews.getChildren().add(restaurantLabel);
         for(int i=0; i<array.length();i++){
@@ -148,7 +159,7 @@ public class ReviewListController implements Initializable {
             reviews.getChildren().add(itemMenu);
         }
         Button addReview = new Button();
-        addReview.setText("Add Review");
+        addReview.setText(getLang().getString("addrev"));
         addReview.getStyleClass().add("whitebutton");
         addReview.setOnMouseClicked(event -> {
             Stage stage = (Stage) addReview.getScene().getWindow();
@@ -163,18 +174,13 @@ public class ReviewListController implements Initializable {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
             stage.setScene(scene);
         });
-        reviews.getChildren().add(addReview);
+        if(JSONLoaded.getActiveUser() != null) reviews.getChildren().add(addReview);
         Pane spacer1 = new Pane();
         spacer1.setPrefHeight(0);
         Pane spacer2 = new Pane();
         spacer2.setPrefHeight(0);
         Pane spacer3 = new Pane();
         VBox.setVgrow(spacer3, Priority.ALWAYS);
-        Image restaurantImage = new Image("https://i.imgur.com/Tf3j0rU.jpg");
-        ImageView rImageView = new ImageView();
-        rImageView.setImage(restaurantImage);
-        rImageView.setPreserveRatio(true);
-        rImageView.setFitWidth(250);
 
         String restaurantName = restaurantJson.getString("name");
         JSONObject address = restaurantJson.getJSONObject("address");
@@ -191,7 +197,7 @@ public class ReviewListController implements Initializable {
         Text ph = new Text(phoneNumber);
         ph.getStyleClass().add("itemnamephone");
 
-        Text ppg = new Text("Show " + getPerpage() + " items");
+        Text ppg = new Text(getLang().getString("show") + getPerpage() + getLang().getString("items"));
         ppg.getStyleClass().add("itemnametext");
         Button morepg = new Button("+");
         morepg.setOnMouseClicked(event -> {
@@ -211,7 +217,7 @@ public class ReviewListController implements Initializable {
         perpgbtn.setAlignment(Pos.CENTER);
         if(getPerpage()==1) lesspg.setVisible(false);
 
-        Text pg = new Text("Page:" + (getPage()+1));
+        Text pg = new Text(getLang().getString("page") + (getPage()+1));
         pg.getStyleClass().add("itemnametext");
         Button nextpg = new Button("+");
         nextpg.setOnMouseClicked(event -> {
@@ -242,17 +248,17 @@ public class ReviewListController implements Initializable {
         restInfo.setAlignment(Pos.TOP_CENTER);
         if(getPerpage()==getElements()){
             morepg.setVisible(false);
-            restInfo.getChildren().addAll(spacer1,rImageView,rN,addr,ph,spacer3,ppg,perpgbtn,spacer2);
+            restInfo.getChildren().addAll(spacer1,rN,addr,ph,spacer3,ppg,perpgbtn,spacer2);
         }
         else{
-            restInfo.getChildren().addAll(spacer1,rImageView,rN,addr,ph,spacer3,ppg,perpgbtn,pg,pgbtn,spacer2);
+            restInfo.getChildren().addAll(spacer1,rN,addr,ph,spacer3,ppg,perpgbtn,pg,pgbtn,spacer2);
         }
         if(getElements()==0){
             perpgbtn.setVisible(false);
             pgbtn.setVisible(false);
             ppg.setVisible(false);
             pg.setVisible(false);
-            restaurantLabel.setText("Reviews - No reviews yet, be first to add one");
+            restaurantLabel.setText(getLang().getString("noreviews"));
         }
     }
 
