@@ -1,6 +1,6 @@
 package sk.vava.zalospevaci;
 
-import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.net.http.HttpClient;
@@ -8,6 +8,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
@@ -33,6 +35,14 @@ public class HomeScreenController implements Initializable {
     private VBox infoVBox;
     @FXML
     private HBox restaurantsHBox;
+    @FXML
+    private Button menubtn;
+    @FXML
+    private Button userbtn;
+    @FXML
+    private VBox menubar;
+    @FXML
+    private VBox userBar;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -55,11 +65,46 @@ public class HomeScreenController implements Initializable {
             e.printStackTrace();
             return "ERROR";
         }
-
     }
 
     public void homeScreen(){
-        JSONArray restaurantsArray = new JSONArray(getJSON("http://localhost:8080/restaurants"));
+        JSONObject full = new JSONObject(getJSON("http://localhost:8080/restaurants"));
+        JSONArray restaurantsArray = full.getJSONArray("restaurants");
+        JSONObject user = JSONLoaded.getUser();
+
+        if (user != null) {
+            if(!Objects.equals(user.getString("token"), "")){
+                String userString = getJSON("http://localhost:8080/users/" + user.getString("name"));
+                JSONObject userJSON = new JSONObject(userString);
+
+                JSONObject addressJSON;
+                try {
+                    addressJSON = userJSON.getJSONObject("address");
+                } catch (Exception e) {
+                    addressJSON = null;
+                }
+
+                Address address;
+                if (addressJSON != null) {
+                    address = new Address(addressJSON.getInt("id"), addressJSON.getString("name"), addressJSON.getString("street"), addressJSON.getString("city"), addressJSON.getString("state"), addressJSON.getString("postcode"), addressJSON.getString("building_number"));
+                } else
+                    address = null;
+
+                JSONObject phoneJSON = userJSON.getJSONObject("phone");
+                Phone phone = new Phone(phoneJSON.getInt("id"), phoneJSON.getString("number"), phoneJSON.getString("country_code"));
+
+                User activeUser = new User(userJSON.getInt("id"), userJSON.getString("username"), userJSON.getString("email"), userJSON.getString("role"), userJSON.getBoolean("blocked"), address, phone);
+                JSONLoaded.setActiveUser(activeUser);
+
+                if(Objects.equals(user.getString("role"), "manager")) {
+                    userBarManagerF();
+                }
+            }
+        } else {
+            guestBarF();
+        }
+
+        menuBarF();
 
         Text brandLabel = new Text("Get Your Meal");
         TextField searchInput = new TextField();
@@ -80,8 +125,8 @@ public class HomeScreenController implements Initializable {
         infoVBox.setAlignment(Pos.CENTER);
         infoVBox.setSpacing(25);
         infoVBox.getChildren().addAll(brandLabel, inputPane);
-
-        for(int i = 0; i < 2; i++){
+        int length = Math.min(restaurantsArray.length(), 2);
+        for(int i = 0; i < length; i++){
             JSONObject restaurant = restaurantsArray.getJSONObject(i);
 
             ImageView imageView = new ImageView();
@@ -117,5 +162,173 @@ public class HomeScreenController implements Initializable {
         }
 
 
+    }
+
+    public void menuBarF(){
+        menubar.getStyleClass().add("menubar");
+        menubar.setVisible(false);
+        menubar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Pane spacer = new Pane();
+        spacer.setPrefHeight(200);
+        Button restaurant = new Button("Restaurants");
+        Button settings = new Button("Settings");
+        restaurant.getStyleClass().add("whitebuttonmenu");
+        settings.getStyleClass().add("whitebuttonmenu");
+        goBack.getStyleClass().add("backbutton");
+        menubar.getChildren().addAll(goBack,spacer,restaurant,settings);
+        menubtn.setOnMouseClicked(e -> {
+            menubar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            menubar.setVisible(false);
+        });
+        restaurant.setOnMouseClicked(e -> {
+            Stage stage = (Stage) restaurant.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+    }
+
+    public void guestBarF() {
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Pane spacer = new Pane();
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(40);
+        spacer2.setPrefHeight(30);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text("Guest");
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
+        Button login = new Button("Login");
+        Button register = new Button("Register");
+
+        login.setOnMouseClicked(e -> {
+            Stage stage = (Stage) login.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("login.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        register.setOnMouseClicked(e -> {
+            Stage stage = (Stage) register.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("register.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        login.getStyleClass().add("whitebuttonmenu");
+        register.getStyleClass().add("whitebuttonmenu");
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack, spacer, userImage, userName,spacer2, login,register);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
+        });
+    }
+
+    public void userBarManagerF() {
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Button accountSettings = new Button("Account Settings");
+        Button manageRestaurant = new Button("Manage Restaurant");
+        Button logout = new Button("Logout");
+
+        System.out.println(JSONLoaded.getActiveUser().username);
+        System.out.println(JSONLoaded.getActiveUser().role);
+
+        Pane spacer = new Pane();
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(20);
+        spacer2.setPrefHeight(15);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text(JSONLoaded.getActiveUser().username);
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
+        accountSettings.setOnMouseClicked(e -> {
+            Stage stage = (Stage) accountSettings.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("profile.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        logout.setOnMouseClicked(e -> {
+            JSONLoaded.setUser(null);
+            JSONLoaded.setActiveUser(null);
+            Stage stage = (Stage) logout.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        accountSettings.getStyleClass().add("whitebuttonmenu");
+        manageRestaurant.getStyleClass().add("whitebuttonmenu");
+        logout.getStyleClass().add("whitebuttonmenu");
+
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
+        });
     }
 }

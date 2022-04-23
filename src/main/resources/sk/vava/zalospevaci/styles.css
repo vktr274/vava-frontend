@@ -35,10 +35,27 @@
     -fx-alignment: center-left;
 }
 
+.ordertoptext{
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 30px;
+}
+
+.orderbottomtext{
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+}
+
 .tree{
     -fx-background-color: gray;
     -fx-pref-height: 20px;
     -fx-pref-width: 200px;
+    -fx-text-fill: black;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 15px;
+}
+
+.menubar{
+    -fx-background-color: white;
     -fx-text-fill: black;
     -fx-font-family: "Roboto Slab ExtraBold";
     -fx-font-size: 15px;
@@ -90,6 +107,21 @@
     -fx-background-color: #919191;
 }
 
+.reviewitem{
+    -fx-background-radius: 15;
+    -fx-background-color: #adadad;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 24px;
+    -fx-min-height: 200px;
+    -fx-min-width: 900px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center-left;
+}
+
+.reviewitem:hover{
+    -fx-background-color: #919191;
+}
+
 .whitebutton{
     -fx-background-radius: 25;
     -fx-background-color: #ffffff;
@@ -107,6 +139,33 @@
 
 .whitebutton:pressed{
     -fx-background-color: #a8a8a8;
+}
+
+.whitebuttonmenu{
+    -fx-background-radius: 25;
+    -fx-background-color: #ffffff;
+    -fx-font-family: 'Roboto Slab ExtraBold';
+    -fx-font-size: 20px;
+    -fx-min-height: 50px;
+    -fx-min-width: 200px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.whitebuttonmenu:hover{
+    -fx-background-color: #e0e0e0;
+}
+
+.whitebuttonmenu:pressed{
+    -fx-background-color: #a8a8a8;
+}
+
+.backbutton{
+    -fx-background-color: #ffffff;
+    -fx-font-family: 'Roboto Slab ExtraBold';
+    -fx-font-size: 28px;
+    -fx-min-height: 50px;
+    -fx-min-width: 200px;
 }
 
 .circlebutton{
@@ -187,6 +246,48 @@
     -fx-background-color: #696969;
 }
 
+
+.textareareview {
+    -fx-background-radius: 20;
+    -fx-background-color: #9f9f9f;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-min-height: 300px;
+    -fx-width: 900px;
+    -fx-alignment: center-left;
+    -fx-border-color: #fff;
+    -fx-border-width: 0;
+    -fx-border-image-width: 0;
+}
+
+.textareareview .content{
+    -fx-background-radius: 20;
+    -fx-background-color: #9f9f9f;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-min-height: 300px;
+    -fx-width: 900px;
+    -fx-alignment: center-left;
+    -fx-border-color: #fff;
+    -fx-border-width: 0;
+    -fx-border-image-width: 0;
+}
+
+.textareareview .scroll-bar:vertical {
+    -fx-pref-width: 1;
+    -fx-opacity: 0;
+}
+
+.slider .track {
+    -fx-control-inner-background: gray;
+}
+.slider{
+    -fx-color: black;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
 .brandLabel {
     -fx-font-family: "Roboto Slab ExtraBold";
     -fx-font-size: 40px;
@@ -204,7 +305,6 @@
 }
 
 .searchButton {
-    -fx-background-image: url("./images/search.png");
     -fx-start-margin: 20;
     -fx-background-size: 30 30;
     -fx-background-repeat: no-repeat;
@@ -220,6 +320,84 @@
     -fx-background-color: #000;
     -fx-font-size: 30;
     -fx-font-family: "Roboto Slab ExtraBold";
+}
+
+.form {
+    -fx-border-color: black;
+    -fx-border-radius: 10;
+}
+
+.formTitlePane {
+    -fx-border-color: black;
+    -fx-min-height: 40;
+    -fx-border-radius: 10;
+}
+
+.formTitle {
+    -fx-font-family: "Roboto Slab ExtraBold";
+}
+
+.formInput {
+    -fx-background-radius: 10;
+    -fx-background-color: #d7d7d7;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 16px;
+    -fx-min-height: 30px;
+    -fx-alignment: center-left;
+}
+
+.formButton {
+    -fx-background-radius: 24;
+    -fx-background-color: #000000;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Roboto Slab';
+    -fx-font-size: 14px;
+    -fx-min-height: 40px;
+    -fx-min-width: 140px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.formButton:hover{
+    -fx-background-color: #343434;
+}
+
+.formButton:pressed{
+    -fx-background-color: #696969;
+}
+
+.altButton {
+    -fx-border-color: none;
+    -fx-background-color: none;
+    -fx-underline: true;
+}
+
+.altButton:hover {
+    -fx-text-fill: #343434;
+}
+
+.altButton:pressed{
+    -fx-text-fill: #696969;
+}
+
+.profileButton {
+    -fx-background-radius: 24;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+    -fx-font-family: 'Roboto Slab';
+    -fx-font-size: 12px;
+    -fx-min-height: 25px;
+    -fx-min-width: 80px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
+    -fx-alignment: center;
+}
+
+.profileButton:hover{
+    -fx-background-color: #e0e0e0;
+}
+
+.profileButton:pressed{
+    -fx-background-color: #a8a8a8;
 }
 
 #menubtn {
