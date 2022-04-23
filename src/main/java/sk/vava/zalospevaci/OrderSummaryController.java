@@ -183,14 +183,63 @@ public class OrderSummaryController implements Initializable {
         Pane spacerMiddle = new Pane();
         VBox.setVgrow(spacerMiddle, Priority.ALWAYS);
 
-        Button payCash = new Button("Pay with Cash");
-        Button payCard = new Button("Pay with Card");
-        payCash.getStyleClass().add("whitebuttonwide");
-        payCard.getStyleClass().add("blackbuttonwide");
+        Button discard = new Button("Discard");
+        Button btnOrder = new Button("Order");
+        discard.getStyleClass().add("whitebuttonwide");
+        btnOrder.getStyleClass().add("blackbuttonwide");
+
+        discard.setOnMouseClicked(event -> {
+            Stage stage = (Stage) discard.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantMenu.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        btnOrder.setOnMouseClicked(event -> {
+            StringBuilder fullOrder = new StringBuilder();
+            for (int[] ints : orderArr) {
+                for (int j = 0; j < ints[1]; j++) {
+                    fullOrder.append(ints[0]).append(",");
+                }
+            }
+            String toSend = fullOrder.substring(0,fullOrder.length()-1);
+            orderHandler(toSend);
+        });
 
         subtotal.setSpacing(20);
         subtotal.setAlignment(Pos.TOP_CENTER);
-        subtotal.getChildren().addAll(spacerSubTop,subTotalLabel,currentPrice,vatInfo,spacerMiddle,payCash,payCard,spacerSubBot);
+        subtotal.getChildren().addAll(spacerSubTop,subTotalLabel,currentPrice,vatInfo,spacerMiddle,discard,btnOrder,spacerSubBot);
+    }
+
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .build();
+
+    public void orderHandler(String order){
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(""))
+                    .uri(new URI("http://localhost:8080/orders?mealsId="+order))
+                    .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
+                    .build();
+        } catch (URISyntaxException e) {
+            System.out.println("error");
+        }
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+        } catch (InterruptedException | IOException e) {
+            System.out.println("error");
+        }
     }
 
     public void menuBarF(){

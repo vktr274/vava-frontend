@@ -177,31 +177,51 @@ public class RestaurantMenuController implements Initializable {
 
 
         reviews.setOnMouseClicked(e -> {
-            Stage stage = (Stage) reviews.getScene().getWindow();
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("reviewList.fxml")));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            assert root != null;
-            Scene scene = new Scene(root, 1280, 720);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
-            stage.setScene(scene);
+                Stage stage = (Stage) reviews.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("reviewList.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+
         });
 
         checkout.setOnMouseClicked(e -> {
-            Stage stage = (Stage) checkout.getScene().getWindow();
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("orderSummary.fxml")));
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            if(checkout.getText().equals("Press to login")){
+                Stage stage = (Stage) checkout.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("login.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
             }
-            assert root != null;
-            Scene scene = new Scene(root, 1280, 720);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
-            stage.setScene(scene);
+            if(JSONLoaded.getActiveUser()==null){
+                checkout.setText("Press to login");
+            }
+            else if(price.get()>0){
+                Stage stage = (Stage) checkout.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("orderSummary.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+            }
+            else checkout.setText("Add something");
         });
 
 
