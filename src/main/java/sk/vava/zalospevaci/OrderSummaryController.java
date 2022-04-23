@@ -239,7 +239,7 @@ public class OrderSummaryController implements Initializable {
         try {
             request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(""))
-                    .uri(new URI("http://localhost:8080/orders?mealsId="+order))
+                    .uri(new URI("http://localhost:8080/orders?items_id="+order))
                     .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
                     .build();
         } catch (URISyntaxException e) {
