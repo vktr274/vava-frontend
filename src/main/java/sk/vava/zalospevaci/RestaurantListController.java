@@ -1,10 +1,15 @@
 package sk.vava.zalospevaci;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -14,9 +19,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -137,7 +141,6 @@ public class RestaurantListController implements Initializable {
         }
         menuBarF();
         for(int i=0; i<array.length();i++){
-            Image image = new Image("https://i.imgur.com/Tf3j0rU.jpg");
             Pane spacer1 = new Pane();
             Pane spacer2 = new Pane();
             Pane spacer3 = new Pane();
@@ -155,26 +158,52 @@ public class RestaurantListController implements Initializable {
             if(object.getBoolean("blocked")) block.setText("Unblock");
             else block.setText("Block");
             block.getStyleClass().add("whitebutton");
+            block.setOnMouseClicked(event -> {
+                handleBlock(object.getInt("id"));
+                restaurantSetScreen();
+            });
 
             Button delete = new Button();
             delete.setText("Remove");
             delete.getStyleClass().add("whitebutton");
+            delete.setOnMouseClicked(event -> {
+                handleDel(object.getInt("id"));
+                restaurantSetScreen();
+            });
 
-            ImageView imageView = new ImageView();
-            imageView.setImage(image);
-            imageView.setPreserveRatio(true);
-            imageView.setFitHeight(90);
+
+            byte[] emojiByteCode = new byte[]{(byte)0xE2, (byte)0xAD, (byte)0x90};
+            String emoji = new String(emojiByteCode, StandardCharsets.UTF_8);
+            Label ratingText = new Label();
+            BigDecimal ratingScore;
+            if(object.get("rating")!=JSONObject.NULL){
+                ratingScore = object.getBigDecimal("rating");
+                ratingScore = ratingScore.setScale(1, RoundingMode.HALF_EVEN);
+                ratingText.setText("Score:\n"+ ratingScore+emoji);
+            }
+            else ratingText.setText("No\nreviews");
+            System.out.println(object.get("rating").getClass().getName());
+            ratingText.getStyleClass().add("score");
+
+            VBox name = new VBox();
+            name.setSpacing(10);
+            name.setAlignment(Pos.CENTER_LEFT);
+            Text restN = new Text(object.getString("name"));
+            restN.getStyleClass().add("itemname");
+            Text restC = new Text(object.getJSONObject("address").getString("city"));
+            restC.getStyleClass().add("itemdesc");
+            name.getChildren().addAll(restN,restC);
 
             restaurant.getStyleClass().add("itembutton");
             if(JSONLoaded.getActiveUser() != null){
                 if(JSONLoaded.getActiveUser().role.equals("admin")){
-                    restaurant.getChildren().addAll(spacer1,imageView,new Text(object.getString("name")),spacer2,block,delete,spacer3);
+                    restaurant.getChildren().addAll(spacer1,ratingText,name,spacer2,block,delete,spacer3);
                 }
                 else if (JSONLoaded.getActiveUser().role.equals("guest") || JSONLoaded.getActiveUser().role.equals("manager")){
-                    restaurant.getChildren().addAll(spacer1,imageView,new Text(object.getString("name")),spacer2,addReview,spacer3);
+                    restaurant.getChildren().addAll(spacer1,ratingText,name,spacer2,addReview,spacer3);
                 }
             }
-            else restaurant.getChildren().addAll(spacer1,imageView,new Text(object.getString("name")),spacer2,spacer3);
+            else restaurant.getChildren().addAll(spacer1,ratingText,name,spacer2,spacer3);
 
 
             restaurant.setOnMouseClicked(e -> {
@@ -328,6 +357,51 @@ public class RestaurantListController implements Initializable {
             pg.setVisible(false);
         }
     }
+
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .build();
+
+    public void handleBlock(int id){
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .PUT(HttpRequest.BodyPublishers.ofString(""))
+                    .uri(new URI("http://localhost:8080/restaurants/"+id+"/state"))
+                    .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
+                    .build();
+        } catch (URISyntaxException e) {
+            System.out.println("error");
+        }
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+        } catch (InterruptedException | IOException e) {
+            System.out.println("error");
+        }
+    }
+
+    public void handleDel(int id){
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .DELETE()
+                    .uri(new URI("http://localhost:8080/restaurants/"+id))
+                    .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
+                    .build();
+        } catch (URISyntaxException e) {
+            System.out.println("error");
+        }
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+        } catch (InterruptedException | IOException e) {
+            System.out.println("error");
+        }
+    }
+
     public void menuBarF(){
         menubar.getChildren().clear();
         menubar.getStyleClass().add("menubar");
