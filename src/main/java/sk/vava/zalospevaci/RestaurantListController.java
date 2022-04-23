@@ -10,6 +10,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -94,8 +95,18 @@ public class RestaurantListController implements Initializable {
         return RestaurantListController.totalpg;
     }
 
+    private static ResourceBundle lang;
+    private void setLang(ResourceBundle lang){
+        RestaurantListController.lang = lang;
+    }
+    private ResourceBundle getLang(){
+        return RestaurantListController.lang;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale("sk", "SK"));
+        setLang(lngBndl);
         restaurantSetScreen();
     }
 
@@ -131,7 +142,7 @@ public class RestaurantListController implements Initializable {
         JSONArray array = full.getJSONArray("restaurants");
         setElements(metadata.getInt("total_elements"));
         setTotalpg(metadata.getInt("total_pages"));
-        Text restaurantLabel = new Text("Restaurants");
+        Text restaurantLabel = new Text(getLang().getString("restaurants"));
         restaurantLabel.getStyleClass().add("label");
         tree.getChildren().add(restaurantLabel);
         if(array.length()==0 && getElements()>0){
@@ -151,12 +162,12 @@ public class RestaurantListController implements Initializable {
             spacer3.setPrefWidth(0);
 
             Button addReview = new Button();
-            addReview.setText("Add Review");
+            addReview.setText(getLang().getString("addrev"));
             addReview.getStyleClass().add("whitebutton");
 
             Button block = new Button();
-            if(object.getBoolean("blocked")) block.setText("Unblock");
-            else block.setText("Block");
+            if(object.getBoolean("blocked")) block.setText(getLang().getString("unblock"));
+            else block.setText(getLang().getString("block"));
             block.getStyleClass().add("whitebutton");
             block.setOnMouseClicked(event -> {
                 handleBlock(object.getInt("id"));
@@ -164,7 +175,7 @@ public class RestaurantListController implements Initializable {
             });
 
             Button delete = new Button();
-            delete.setText("Remove");
+            delete.setText(getLang().getString("delete"));
             delete.getStyleClass().add("whitebutton");
             delete.setOnMouseClicked(event -> {
                 handleDel(object.getInt("id"));
@@ -179,9 +190,9 @@ public class RestaurantListController implements Initializable {
             if(object.get("rating")!=JSONObject.NULL){
                 ratingScore = object.getBigDecimal("rating");
                 ratingScore = ratingScore.setScale(1, RoundingMode.HALF_EVEN);
-                ratingText.setText("Score:\n"+ ratingScore+emoji);
+                ratingText.setText(getLang().getString("score")+"\n"+ ratingScore+emoji);
             }
-            else ratingText.setText("No\nreviews");
+            else ratingText.setText(getLang().getString("noscore"));
             System.out.println(object.get("rating").getClass().getName());
             ratingText.getStyleClass().add("score");
 
@@ -226,9 +237,9 @@ public class RestaurantListController implements Initializable {
 
         Button blockbtn = new Button();
         blockbtn.getStyleClass().add("whitebuttonwide");
-        if(getBlocked().equals("false")) blockbtn.setText("Blocked hidden");
-        if(getBlocked().equals("true")) blockbtn.setText("Blocked shown");
-        if(getBlocked().equals("")) blockbtn.setText("All shown");
+        if(getBlocked().equals("false")) blockbtn.setText(getLang().getString("blh"));
+        if(getBlocked().equals("true")) blockbtn.setText(getLang().getString("bls"));
+        if(getBlocked().equals("")) blockbtn.setText(getLang().getString("als"));
         blockbtn.setOnMouseClicked(event -> {
             if(getBlocked().equals("false")) setBlocked("true");
             else if(getBlocked().equals("true")) setBlocked("");
@@ -243,10 +254,10 @@ public class RestaurantListController implements Initializable {
         Button asc = new Button();
         asc.getStyleClass().add("whitebuttonwide");
         if(getAscending().equals("asc")){
-            asc.setText("Ascending order");
+            asc.setText(getLang().getString("as"));
         }
         else if (getAscending().equals("desc")){
-            asc.setText("Descending order");
+            asc.setText(getLang().getString("ds"));
         }
         asc.setOnMouseClicked(event -> {
             if(getAscending().equals("asc")){
@@ -261,22 +272,22 @@ public class RestaurantListController implements Initializable {
 
         TextField city = new TextField();
         city.getStyleClass().add("whitebuttonwide");
-        city.setPromptText("City");
+        city.setPromptText(getLang().getString("city"));
         city.setMaxWidth(250);
 
         TextField restname = new TextField();
         restname.getStyleClass().add("whitebuttonwide");
-        restname.setPromptText("Restaurant name");
+        restname.setPromptText(getLang().getString("restn"));
         restname.setMaxWidth(250);
 
-        Button apply = new Button("Apply filters");
+        Button apply = new Button(getLang().getString("applfil"));
         apply.getStyleClass().add("blackbuttonwide");
         apply.setOnMouseClicked(event -> {
             setCity(city.getText());
             setName(restname.getText());
             restaurantSetScreen();
         });
-        Button reset = new Button("Reset filters");
+        Button reset = new Button(getLang().getString("restfil"));
         reset.getStyleClass().add("whitebuttonwide");
         reset.setOnMouseClicked(event -> {
             setCity("");
@@ -287,7 +298,7 @@ public class RestaurantListController implements Initializable {
             reset.setVisible(false);
         }
 
-        Text ppg = new Text("Show " + getPerpage() + " items");
+        Text ppg = new Text(getLang().getString("show") + getPerpage() + getLang().getString("items"));
         ppg.getStyleClass().add("itemnametext");
         Button morepg = new Button("+");
         morepg.setOnMouseClicked(event -> {
@@ -307,7 +318,7 @@ public class RestaurantListController implements Initializable {
         perpgbtn.setAlignment(Pos.CENTER);
         if(getPerpage()==1) lesspg.setVisible(false);
 
-        Text pg = new Text("Page:" + (getPage()+1));
+        Text pg = new Text(getLang().getString("page") + (getPage()+1));
         pg.getStyleClass().add("itemnametext");
         Button nextpg = new Button("+");
         nextpg.setOnMouseClicked(event -> {
