@@ -26,6 +26,7 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,8 +45,18 @@ public class OrderSummaryController implements Initializable {
     @FXML
     private VBox menubar;
 
+    private static ResourceBundle lang;
+    private void setLang(ResourceBundle lang){
+        OrderSummaryController.lang = lang;
+    }
+    private ResourceBundle getLang(){
+        return OrderSummaryController.lang;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale("sk", "SK"));
+        setLang(lngBndl);
         SetScreen();
     }
 
@@ -79,13 +90,13 @@ public class OrderSummaryController implements Initializable {
 
 
         Text currentPrice = new Text("Please wait");
-        Text addrLabel = new Text("Set Address");
+        Text addrLabel = new Text(getLang().getString("setaddr"));
         TextField address = new TextField();
-        Text noteLabel = new Text("Optional Note");
+        Text noteLabel = new Text(getLang().getString("setnote"));
         TextField note = new TextField();
-        Text summLabel = new Text("Your Order Summary");
-        Text subTotalLabel = new Text("Sub total");
-        Text vatInfo = new Text("Including VAT");
+        Text summLabel = new Text(getLang().getString("summary"));
+        Text subTotalLabel = new Text(getLang().getString("subttl"));
+        Text vatInfo = new Text(getLang().getString("vat"));
 
         currentPrice.getStyleClass().add("label");
         addrLabel.getStyleClass().add("label");
@@ -183,8 +194,8 @@ public class OrderSummaryController implements Initializable {
         Pane spacerMiddle = new Pane();
         VBox.setVgrow(spacerMiddle, Priority.ALWAYS);
 
-        Button discard = new Button("Discard");
-        Button btnOrder = new Button("Order");
+        Button discard = new Button(getLang().getString("discard"));
+        Button btnOrder = new Button(getLang().getString("ord"));
         discard.getStyleClass().add("whitebuttonwide");
         btnOrder.getStyleClass().add("blackbuttonwide");
 

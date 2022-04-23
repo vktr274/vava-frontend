@@ -5,6 +5,7 @@ import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -90,8 +91,18 @@ public class UserListController implements Initializable {
         return UserListController.totalpg;
     }
 
+    private static ResourceBundle lang;
+    private void setLang(ResourceBundle lang){
+        UserListController.lang = lang;
+    }
+    private ResourceBundle getLang(){
+        return UserListController.lang;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale("sk", "SK"));
+        setLang(lngBndl);
         restaurantSetScreen();
     }
 
@@ -148,12 +159,12 @@ public class UserListController implements Initializable {
             spacer3.setPrefWidth(0);
 
             Button addReview = new Button();
-            addReview.setText("Add Review");
+            addReview.setText(getLang().getString("addrev"));
             addReview.getStyleClass().add("whitebutton");
 
             Button block = new Button();
-            if(object.getBoolean("blocked")) block.setText("Unblock");
-            else block.setText("Block");
+            if(object.getBoolean("blocked")) block.setText(getLang().getString("unblock"));
+            else block.setText(getLang().getString("block"));
             block.getStyleClass().add("whitebutton");
             block.setOnMouseClicked(event -> {
                 handleBlock(object.getInt("id"));
@@ -161,7 +172,7 @@ public class UserListController implements Initializable {
             });
 
             Button delete = new Button();
-            delete.setText("Remove");
+            delete.setText(getLang().getString("delete"));
             delete.getStyleClass().add("whitebutton");
 
             restaurant.getStyleClass().add("itembutton");
@@ -188,9 +199,9 @@ public class UserListController implements Initializable {
 
         Button blockbtn = new Button();
         blockbtn.getStyleClass().add("whitebuttonwide");
-        if(getBlocked().equals("false")) blockbtn.setText("Blocked hidden");
-        if(getBlocked().equals("true")) blockbtn.setText("Blocked shown");
-        if(getBlocked().equals("")) blockbtn.setText("All shown");
+        if(getBlocked().equals("false")) blockbtn.setText(getLang().getString("blh"));
+        if(getBlocked().equals("true")) blockbtn.setText(getLang().getString("bls"));
+        if(getBlocked().equals("")) blockbtn.setText(getLang().getString("als"));
         blockbtn.setOnMouseClicked(event -> {
             if(getBlocked().equals("false")) setBlocked("true");
             else if(getBlocked().equals("true")) setBlocked("");
@@ -201,10 +212,10 @@ public class UserListController implements Initializable {
         Button asc = new Button();
         asc.getStyleClass().add("whitebuttonwide");
         if(getAscending().equals("asc")){
-            asc.setText("Ascending order");
+            asc.setText(getLang().getString("as"));
         }
         else if (getAscending().equals("desc")){
-            asc.setText("Descending order");
+            asc.setText(getLang().getString("ds"));
         }
         asc.setOnMouseClicked(event -> {
             if(getAscending().equals("asc")){
@@ -221,20 +232,20 @@ public class UserListController implements Initializable {
         Button role = new Button();
         role.getStyleClass().add("whitebuttonwide");
         if(getRole().equals("guest")){
-            role.setText("Showing users");
-            restaurantLabel.setText("Users - Only users");
+            role.setText(getLang().getString("su"));
+            restaurantLabel.setText(getLang().getString("usu"));
         }
         if(getRole().equals("manager")){
-            role.setText("Showing managers");
-            restaurantLabel.setText("Users - Only managers");
+            role.setText(getLang().getString("mg"));
+            restaurantLabel.setText(getLang().getString("umg"));
         }
         if(getRole().equals("admin")){
-            role.setText("Showing admins");
-            restaurantLabel.setText("Users - Only admins");
+            role.setText(getLang().getString("ad"));
+            restaurantLabel.setText(getLang().getString("uad"));
         }
         if(getRole().equals("")){
-            role.setText("All shown");
-            restaurantLabel.setText("Users - All");
+            role.setText(getLang().getString("alu"));
+            restaurantLabel.setText(getLang().getString("ual"));
         }
         role.setOnMouseClicked(event -> {
             if(getRole().equals("guest")) setRole("manager");
@@ -246,16 +257,16 @@ public class UserListController implements Initializable {
 
         TextField restname = new TextField();
         restname.getStyleClass().add("whitebuttonwide");
-        restname.setPromptText("User Name");
+        restname.setPromptText(getLang().getString("userfilt"));
         restname.setMaxWidth(250);
 
-        Button apply = new Button("Apply filters");
+        Button apply = new Button(getLang().getString("applfil"));
         apply.getStyleClass().add("blackbuttonwide");
         apply.setOnMouseClicked(event -> {
             setName(restname.getText());
             restaurantSetScreen();
         });
-        Button reset = new Button("Reset filters");
+        Button reset = new Button(getLang().getString("restfil"));
         reset.getStyleClass().add("whitebuttonwide");
         reset.setOnMouseClicked(event -> {
             setName("");
@@ -265,7 +276,7 @@ public class UserListController implements Initializable {
             reset.setVisible(false);
         }
 
-        Text ppg = new Text("Show " + getPerpage() + " items");
+        Text ppg = new Text(getLang().getString("show") + getPerpage() + getLang().getString("items"));
         ppg.getStyleClass().add("itemnametext");
         Button morepg = new Button("+");
         morepg.setOnMouseClicked(event -> {
@@ -285,7 +296,7 @@ public class UserListController implements Initializable {
         perpgbtn.setAlignment(Pos.CENTER);
         if(getPerpage()==1) lesspg.setVisible(false);
 
-        Text pg = new Text("Page:" + (getPage()+1));
+        Text pg = new Text(getLang().getString("page") + (getPage()+1));
         pg.getStyleClass().add("itemnametext");
         Button nextpg = new Button("+");
         nextpg.setOnMouseClicked(event -> {
