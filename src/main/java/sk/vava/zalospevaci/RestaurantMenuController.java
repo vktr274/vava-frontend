@@ -82,7 +82,6 @@ public class RestaurantMenuController implements Initializable {
         AtomicReference<Double> price = new AtomicReference<>((double) 0);
         int[][] orderById = new int[array.length()][3];
         for(int i=0; i<array.length();i++){
-            Image image = new Image("https://i.imgur.com/Tf3j0rU.jpg");
             Pane spacer1 = new Pane();
             Pane spacer2 = new Pane();
             Pane spacer3 = new Pane();
@@ -126,10 +125,6 @@ public class RestaurantMenuController implements Initializable {
                 }
             });
 
-            ImageView imageView = new ImageView();
-            imageView.setImage(image);
-            imageView.setPreserveRatio(true);
-            imageView.setFitHeight(90);
 
             Text itemName = new Text(object.getString("name"));
             itemName.getStyleClass().add("itemname");
@@ -139,7 +134,7 @@ public class RestaurantMenuController implements Initializable {
             texts.getChildren().addAll(itemName,itemDesc);
 
             itemMenu.getStyleClass().add("menuitem");
-            itemMenu.getChildren().addAll(spacer1,imageView,texts,spacer2,removeFromCart,addToCart,spacer3);
+            itemMenu.getChildren().addAll(spacer1,texts,spacer2,removeFromCart,addToCart,spacer3);
             menu.getChildren().add(itemMenu);
         }
 
@@ -149,11 +144,6 @@ public class RestaurantMenuController implements Initializable {
         spacer2.setPrefHeight(0);
         Pane spacer3 = new Pane();
         VBox.setVgrow(spacer3, Priority.ALWAYS);
-        Image restaurantImage = new Image("https://i.imgur.com/Tf3j0rU.jpg");
-        ImageView rImageView = new ImageView();
-        rImageView.setImage(restaurantImage);
-        rImageView.setPreserveRatio(true);
-        rImageView.setFitWidth(250);
 
         String restaurantName = restaurantJson.getString("name");
         JSONObject address = restaurantJson.getJSONObject("address");
@@ -170,11 +160,26 @@ public class RestaurantMenuController implements Initializable {
         Text ph = new Text(phoneNumber);
         ph.getStyleClass().add("itemnamephone");
 
+        Button goback = new Button("Go back");
         Button reviews = new Button("Reviews");
         Button checkout = new Button("Checkout");
         reviews.getStyleClass().add("whitebuttonwide");
+        goback.getStyleClass().add("whitebuttonwide");
         checkout.getStyleClass().add("blackbuttonwide");
 
+        goback.setOnMouseClicked(event -> {
+            Stage stage = (Stage) goback.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
 
         reviews.setOnMouseClicked(e -> {
                 Stage stage = (Stage) reviews.getScene().getWindow();
@@ -227,7 +232,7 @@ public class RestaurantMenuController implements Initializable {
 
         restInfo.setSpacing(20);
         restInfo.setAlignment(Pos.TOP_CENTER);
-        restInfo.getChildren().addAll(spacer1,rImageView,rN,addr,ph,spacer3,currentPrice,reviews,checkout,spacer2);
+        restInfo.getChildren().addAll(spacer1,rN,addr,ph,spacer3,currentPrice,goback,reviews,checkout,spacer2);
 
     }
 
