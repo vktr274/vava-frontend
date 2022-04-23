@@ -12,9 +12,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ResourceBundle;
 
 public class ProfileController implements Initializable {
@@ -23,8 +30,51 @@ public class ProfileController implements Initializable {
         profileScreen();
     }
 
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .build();
+
+    public String handleEdit(User editedUser, String url){
+        JSONObject requestB = new JSONObject(editedUser);
+
+        System.out.println(requestB);
+
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .PUT(HttpRequest.BodyPublishers.ofString(requestB.toString()))
+                    .uri(new URI(url))
+                    .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
+                    .header("Content-Type", "application/json")
+                    .build();
+        } catch (URISyntaxException e) {
+            return "ERROR";
+        }
+
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if(response.statusCode() == 200){
+                JSONLoaded.setUser(new JSONObject(response.body()));
+                return response.body();
+            }
+            else{
+                System.out.println(response.statusCode());
+            }
+        } catch (InterruptedException | IOException e) {
+            return "ERROR";
+        }
+        return "ERROR";
+    }
+
+
     @FXML
     private VBox mainVBox;
+    private boolean editingAddress = false;
+    private boolean editingPassword = false;
+    private boolean editingUsername = false;
+    private boolean editingEmail = false;
 
     public void profileScreen() {
         mainVBox.setSpacing(20);
@@ -174,12 +224,19 @@ public class ProfileController implements Initializable {
             city.setDisable(true);
             state.setDisable(true);
             postalcode.setDisable(true);
+
+            name.setText("");
+            street.setText("");
+            building_number.setText("");
+            city.setText("");
+            state.setText("");
+            postalcode.setText("");
         });
 
         if (user.getAddress() != null) {
             name.setText(user.getAddress().getName());
             street.setText(user.getAddress().getStreet());
-            building_number.setText(user.getAddress().getBuildingNumber());
+            building_number.setText(user.getAddress().getBuilding_number());
             city.setText(user.getAddress().getCity());
             state.setText(user.getAddress().getState());
             postalcode.setText(user.getAddress().getPostcode());
@@ -193,6 +250,16 @@ public class ProfileController implements Initializable {
             city.setDisable(false);
             state.setDisable(false);
             postalcode.setDisable(false);
+            editingAddress = true;
+        });
+
+        ConfirmButton.setOnMouseClicked(event -> {
+            User editedUser = new User(JSONLoaded.getActiveUser().getId(), null, null, null, JSONLoaded.getActiveUser().isBlocked(), null, null);
+            if (editingAddress) {
+                Address editedAddress = new Address(JSONLoaded.getActiveUser().getAddress().getId(), name.getText(), street.getText(), city.getText(), state.getText(), postalcode.getText(), building_number.getText());
+                editedUser.setAddress(editedAddress);
+                handleEdit(editedUser, "http://localhost:8080/users");
+            }
         });
 
         profileVBox.getChildren().addAll(userImage, usernameLabel, emailLabel, addressTitleHBox, addressesVBox, spacer, passwordHBox, passwordFieldHBox, buttonsHBox);
