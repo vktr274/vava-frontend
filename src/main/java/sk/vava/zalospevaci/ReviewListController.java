@@ -29,6 +29,7 @@ import java.net.http.HttpResponse;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReviewListController implements Initializable {
 
@@ -141,9 +142,20 @@ public class ReviewListController implements Initializable {
             imageView.setFitHeight(150);
             JSONArray photos = object.getJSONArray("photos");
             //System.out.println(String.valueOf(photos) + photos.length());
-            if(photos.length()==1){
-                Image img = new Image("http://localhost:8080/photos/"+photos.getInt(0));
-                imageView.setImage(img);
+            if(photos.length()>0){
+                final AtomicInteger[] index = {new AtomicInteger()};
+                final Image[] img = {new Image("http://localhost:8080/photos/" + photos.getInt(index[0].get()))};
+                imageView.setImage(img[0]);
+                imageView.setOnMouseClicked(event -> {
+                    if(index[0].get() +1<photos.length()){
+                        index[0].addAndGet(1);
+                        img[0] = new Image("http://localhost:8080/photos/"+photos.getInt(index[0].get()));
+                        imageView.setImage(img[0]);
+                    }
+                    else{
+                        index[0].set(0);
+                    }
+                });
             }
             Text itemName = new Text(object.getString("username"));
             itemName.getStyleClass().add("itemname");
@@ -263,6 +275,7 @@ public class ReviewListController implements Initializable {
     }
 
     public void menuBarF(){
+        menubar.getChildren().clear();
         menubar.getStyleClass().add("menubar");
         menubar.setVisible(false);
         menubar.setSpacing(20);

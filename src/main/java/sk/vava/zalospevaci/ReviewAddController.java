@@ -17,17 +17,18 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONObject;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,12 +36,13 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 public class ReviewAddController implements Initializable {
 
@@ -58,11 +60,22 @@ public class ReviewAddController implements Initializable {
             .version(HttpClient.Version.HTTP_2)
             .build();
 
-    private static File imgfile;
-    private void setImgfile(File file){
-        ReviewAddController.imgfile = file;
+    private static int index = 0;
+    private void resetIndex(){
+        ReviewAddController.index=0;
     }
-    private File getImgfile(){
+    private void iterIndex(){
+        ReviewAddController.index+=1;
+        if(ReviewAddController.index==3) ReviewAddController.index=0;
+    }
+    private int getIndex(){
+        return ReviewAddController.index;
+    }
+    private static File[] imgfile;
+    private static void setImgfile(File[] imgfile) {
+        ReviewAddController.imgfile = imgfile;
+    }
+    private File[] getImgfile(){
         return ReviewAddController.imgfile;
     }
 
@@ -114,7 +127,16 @@ public class ReviewAddController implements Initializable {
         VBox.setVgrow(spacer3, Priority.ALWAYS);
         ImageView rImageView = new ImageView();
         rImageView.setPreserveRatio(true);
-        rImageView.setFitWidth(250);
+        rImageView.maxWidth(250);
+        rImageView.setFitHeight(120);
+        ImageView rImageView2 = new ImageView();
+        rImageView2.setPreserveRatio(true);
+        rImageView2.maxWidth(250);
+        rImageView2.setFitHeight(120);
+        ImageView rImageView3 = new ImageView();
+        rImageView3.setPreserveRatio(true);
+        rImageView3.maxWidth(250);
+        rImageView3.setFitHeight(120);
 
         Button addImg = new Button(getLang().getString("addimg"));
         addImg.getStyleClass().add("whitebuttonwide");
@@ -123,6 +145,8 @@ public class ReviewAddController implements Initializable {
         Button save = new Button(getLang().getString("save"));
         save.getStyleClass().add("blackbuttonwide");
 
+
+        File[] images = new File[3];
         addImg.setOnMouseClicked(event -> {
             FileChooser fileChooser = new FileChooser();
 
@@ -133,13 +157,27 @@ public class ReviewAddController implements Initializable {
 
             //Show open file dialog
             File file = fileChooser.showOpenDialog(null);
-            System.out.println(file.toURI());
-            System.out.println(Paths.get(file.toURI()));
 
             if (file != null) {
-                Image image = new Image(file.toURI().toString());
-                setImgfile(file);
-                rImageView.setImage(image);
+                try {
+                    if(Files.size(Paths.get(file.toURI()))<1024*1024){
+                        Image image = new Image(file.toURI().toString());
+                        images[getIndex()]= file;
+                        if(getIndex()==0)rImageView.setImage(image);
+                        if(getIndex()==1)rImageView2.setImage(image);
+                        if(getIndex()==2)rImageView3.setImage(image);
+                        iterIndex();
+                    }
+                    else{
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("File too big!");
+                        alert.setContentText("Please ensure that the size of a photo is under 1MB");
+                        alert.showAndWait();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         discard.setOnMouseClicked(event -> {
@@ -156,6 +194,7 @@ public class ReviewAddController implements Initializable {
             stage.setScene(scene);
         });
         save.setOnMouseClicked(event -> {
+            setImgfile(images);
             addReview("http://localhost:8080/reviews?restaurant_id="+restaurantJson.getInt("id"), revText.getText(), (int) stars.getValue());
             Stage stage = (Stage) discard.getScene().getWindow();
             Parent root = null;
@@ -172,7 +211,7 @@ public class ReviewAddController implements Initializable {
 
         restInfo.setSpacing(20);
         restInfo.setAlignment(Pos.TOP_CENTER);
-        restInfo.getChildren().addAll(spacer1,rImageView,spacer3,addImg,discard,save,spacer2);
+        restInfo.getChildren().addAll(spacer1,rImageView,rImageView2,rImageView3,spacer3,addImg,discard,save,spacer2);
     }
 
     public void addReview(String url, String text, int stars){
@@ -200,27 +239,40 @@ public class ReviewAddController implements Initializable {
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
-        
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://localhost:8080/photos?username=jano4&review_id="+reviewId);
-        httpPost.setHeader("auth",JSONLoaded.getUser().getString("token"));
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.addBinaryBody(
-                "file", getImgfile(), ContentType.APPLICATION_OCTET_STREAM, "xx.jpg");
+        File[] images = getImgfile();
 
-        HttpEntity multipart = builder.build();
-        httpPost.setEntity(multipart);
+        try{
+            for (File image : images) {
+                CloseableHttpClient client = HttpClients.createDefault();
+                HttpPost httpPost = new HttpPost("http://localhost:8080/photos?username=jano4&review_id=" + reviewId);
+                httpPost.setHeader("auth", JSONLoaded.getUser().getString("token"));
+                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                System.out.println(image);
+                builder.addBinaryBody(
+                        "file", image, ContentType.APPLICATION_OCTET_STREAM, "xx.jpg");
 
-        try {
-            CloseableHttpResponse response2 = client.execute(httpPost);
-        } catch (IOException e) {
+                HttpEntity multipart = builder.build();
+                httpPost.setEntity(multipart);
+                try {
+                    CloseableHttpResponse response2 = client.execute(httpPost);
+                    System.out.println(Arrays.toString(new StatusLine[]{response2.getStatusLine()}));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                TimeUnit.SECONDS.sleep(1);
+            }
+        } catch (IllegalArgumentException e){
+            System.out.println("uploaded less than max photos");
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        try {
-            client.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        resetIndex();
+
     }
 
     public void menuBarF(){
@@ -238,12 +290,8 @@ public class ReviewAddController implements Initializable {
         settings.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
         menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
-        menubtn.setOnMouseClicked(e -> {
-            menubar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            menubar.setVisible(false);
-        });
+        menubtn.setOnMouseClicked(e -> menubar.setVisible(true));
+        goBack.setOnMouseClicked(e -> menubar.setVisible(false));
         home.setOnMouseClicked(e -> {
             Stage stage = (Stage) home.getScene().getWindow();
             Parent root = null;
