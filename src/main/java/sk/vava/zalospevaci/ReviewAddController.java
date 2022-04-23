@@ -215,21 +215,40 @@ public class ReviewAddController implements Initializable {
     }
 
     public void menuBarF(){
-        menubar.getChildren().clear();
         menubar.getStyleClass().add("menubar");
         menubar.setVisible(false);
         menubar.setSpacing(20);
         Button goBack = new Button("\uD83E\uDC14 Close");
         Pane spacer = new Pane();
         spacer.setPrefHeight(200);
+        Button home = new Button("Home");
         Button restaurant = new Button("Restaurants");
         Button settings = new Button("Settings");
+        home.getStyleClass().add("whitebuttonmenu");
         restaurant.getStyleClass().add("whitebuttonmenu");
         settings.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
-        menubar.getChildren().addAll(goBack,spacer,restaurant,settings);
-        menubtn.setOnMouseClicked(e -> menubar.setVisible(true));
-        goBack.setOnMouseClicked(e -> menubar.setVisible(false));
+        menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
+        menubtn.setOnMouseClicked(e -> {
+            menubar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            menubar.setVisible(false);
+        });
+        home.setOnMouseClicked(e -> {
+            Stage stage = (Stage) home.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
         restaurant.setOnMouseClicked(e -> {
             Stage stage = (Stage) restaurant.getScene().getWindow();
             Parent root = null;
