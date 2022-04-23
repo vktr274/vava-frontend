@@ -22,6 +22,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -208,9 +210,25 @@ public class RegisterController implements Initializable {
         registerButton.getStyleClass().add("formButton");
 
         registerButton.setOnMouseClicked(e -> {
+            String hashedPassword = password.getText();
+
+            //hash md5
+            try {
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                md.update(hashedPassword.getBytes());
+                byte[] digest = md.digest();
+                StringBuffer sb = new StringBuffer();
+                for (byte b : digest) {
+                    sb.append(String.format("%02x", b & 0xff));
+                }
+                hashedPassword = sb.toString();
+            } catch (NoSuchAlgorithmException ex) {
+                ex.printStackTrace();
+            }
+
             RadioButton rb = (RadioButton) radioGroup.getSelectedToggle();
             boolean isManager = Objects.equals(rb.getText(), "Restaurant Manager");
-            handleRegister("http://localhost:8080/users", name.getText(), password.getText(), email.getText(), isManager, prefix.getText(), phone.getText());
+            handleRegister("http://localhost:8080/users", name.getText(), hashedPassword, email.getText(), isManager, prefix.getText(), phone.getText());
             if(successful) {
                 Stage stage = (Stage) registerButton.getScene().getWindow();
                 Parent root = null;

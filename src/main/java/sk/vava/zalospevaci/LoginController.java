@@ -28,6 +28,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -141,7 +143,23 @@ public class LoginController implements Initializable  {
         loginButton.getStyleClass().add("formButton");
 
         loginButton.setOnMouseClicked(e -> {
-            handleLogin("http://localhost:8080/token", username.getText(), password.getText());
+            String hashedPassword = password.getText();
+
+            //md5 hash
+            try {
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                md.update(hashedPassword.getBytes());
+                byte[] digest = md.digest();
+                StringBuffer sb = new StringBuffer();
+                for (byte b : digest) {
+                    sb.append(String.format("%02x", b & 0xff));
+                }
+                hashedPassword = sb.toString();
+            } catch (NoSuchAlgorithmException ex) {
+                ex.printStackTrace();
+            }
+
+            handleLogin("http://localhost:8080/token", username.getText(), hashedPassword);
             JSONObject user = JSONLoaded.getUser();
             if (user != null && !Objects.equals(user.getString("token"), "")) {
                 Stage stage = (Stage) loginButton.getScene().getWindow();

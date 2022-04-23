@@ -23,6 +23,8 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ResourceBundle;
 
 public class ProfileController implements Initializable {
@@ -224,7 +226,16 @@ public class ProfileController implements Initializable {
 
         HBox addr1 = new HBox();
         addr1.setAlignment(Pos.CENTER);
-        name.setText(user.getAddress().getName());
+
+        if (user.getAddress() != null) {
+            name.setText(user.getAddress().getName());
+            street.setText(user.getAddress().getStreet());
+            building_number.setText(user.getAddress().getBuilding_number());
+            city.setText(user.getAddress().getCity());
+            state.setText(user.getAddress().getState());
+            postalcode.setText(user.getAddress().getPostcode());
+        }
+
         name.setPromptText("Name");
         name.setPrefWidth(350);
         name.getStyleClass().add("formInput");
@@ -234,9 +245,6 @@ public class ProfileController implements Initializable {
         HBox addr2 = new HBox();
         addr2.setSpacing(10);
         addr2.setAlignment(Pos.CENTER);
-
-        street.setText(user.getAddress().getStreet());
-        building_number.setText(user.getAddress().getBuilding_number());
 
         street.setPrefWidth(200);
         building_number.setPrefWidth(140);
@@ -255,9 +263,6 @@ public class ProfileController implements Initializable {
         city.setPrefWidth(170);
         state.setPrefWidth(170);
 
-        city.setText(user.getAddress().getCity());
-        state.setText(user.getAddress().getState());
-
         city.setPromptText("City");
         state.setPromptText("State");
 
@@ -269,7 +274,6 @@ public class ProfileController implements Initializable {
         HBox addr4 = new HBox();
         addr4.setAlignment(Pos.CENTER);
 
-        postalcode.setText(user.getAddress().getPostcode());
         postalcode.setPromptText("Postal code");
         postalcode.getStyleClass().add("formInput");
 
@@ -445,6 +449,19 @@ public class ProfileController implements Initializable {
 
             if(editingPassword){
                 newPassword = password.getText();
+                //hash to md5
+                try {
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+                    md.update(newPassword.getBytes());
+                    byte[] digest = md.digest();
+                    StringBuffer sb = new StringBuffer();
+                    for (byte b : digest) {
+                        sb.append(String.format("%02x", b & 0xff));
+                    }
+                    newPassword = sb.toString();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
             }
 
             if(editingUsername || editingAddress || editingEmail || editingPassword){
