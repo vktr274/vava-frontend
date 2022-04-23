@@ -155,10 +155,18 @@ public class RestaurantListController implements Initializable {
             if(object.getBoolean("blocked")) block.setText("Unblock");
             else block.setText("Block");
             block.getStyleClass().add("whitebutton");
+            block.setOnMouseClicked(event -> {
+                handleBlock(object.getInt("id"));
+                restaurantSetScreen();
+            });
 
             Button delete = new Button();
             delete.setText("Remove");
             delete.getStyleClass().add("whitebutton");
+            delete.setOnMouseClicked(event -> {
+                handleDel(object.getInt("id"));
+                restaurantSetScreen();
+            });
 
             ImageView imageView = new ImageView();
             imageView.setImage(image);
@@ -328,6 +336,51 @@ public class RestaurantListController implements Initializable {
             pg.setVisible(false);
         }
     }
+
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .build();
+
+    public void handleBlock(int id){
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .PUT(HttpRequest.BodyPublishers.ofString(""))
+                    .uri(new URI("http://localhost:8080/restaurants/"+id+"/state"))
+                    .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
+                    .build();
+        } catch (URISyntaxException e) {
+            System.out.println("error");
+        }
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+        } catch (InterruptedException | IOException e) {
+            System.out.println("error");
+        }
+    }
+
+    public void handleDel(int id){
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .DELETE()
+                    .uri(new URI("http://localhost:8080/restaurants/"+id))
+                    .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
+                    .build();
+        } catch (URISyntaxException e) {
+            System.out.println("error");
+        }
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+        } catch (InterruptedException | IOException e) {
+            System.out.println("error");
+        }
+    }
+
     public void menuBarF(){
         menubar.getChildren().clear();
         menubar.getStyleClass().add("menubar");
