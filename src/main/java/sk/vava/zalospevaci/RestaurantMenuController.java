@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,9 +44,19 @@ public class RestaurantMenuController implements Initializable {
     @FXML
     private VBox menubar;
 
+    private static ResourceBundle lang;
+    private void setLang(ResourceBundle lang){
+        RestaurantMenuController.lang = lang;
+    }
+    private ResourceBundle getLang(){
+        return RestaurantMenuController.lang;
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale("sk", "SK"));
+        setLang(lngBndl);
         SetScreen();
     }
 
@@ -77,7 +88,7 @@ public class RestaurantMenuController implements Initializable {
         Text restaurantLabel = new Text("Menu");
         restaurantLabel.getStyleClass().add("label");
         menu.getChildren().add(restaurantLabel);
-        Text currentPrice = new Text("Empty basket");
+        Text currentPrice = new Text(getLang().getString("emptybasket"));
         currentPrice.getStyleClass().add("itemname");
         AtomicReference<Double> price = new AtomicReference<>((double) 0);
         int[][] orderById = new int[array.length()][3];
@@ -104,7 +115,7 @@ public class RestaurantMenuController implements Initializable {
                 orderById[finalI][1] = amount.get();
                 JSONLoaded.setOrder(orderById);
                 price.updateAndGet(v -> v + (double) object.getInt("price"));
-                currentPrice.setText("In basket: " + price.get() / 100 +"\u20ac");
+                currentPrice.setText(getLang().getString("inb") + price.get() / 100 +"\u20ac");
                 addToCart.setText(amount+"x "+(double) object.getInt("price")/100+"\u20ac");
                 removeFromCart.setVisible(true);
             });
@@ -116,10 +127,10 @@ public class RestaurantMenuController implements Initializable {
                 orderById[finalI][1] = amount.get();
                 JSONLoaded.setOrder(orderById);
                 price.updateAndGet(v -> v - (double) object.getInt("price"));
-                currentPrice.setText("In basket: " + price.get() / 100 +"\u20ac");
+                currentPrice.setText(getLang().getString("inb") + price.get() / 100 +"\u20ac");
                 addToCart.setText(amount+"x "+(double) object.getInt("price")/100+"\u20ac");
                 if(amount.get() == 0){
-                    if(price.get()==0) currentPrice.setText("Empty basket");
+                    if(price.get()==0) currentPrice.setText(getLang().getString("emptybasket"));
                     addToCart.setText((double) object.getInt("price")/100+"\u20ac");
                     removeFromCart.setVisible(false);
                 }
@@ -160,9 +171,9 @@ public class RestaurantMenuController implements Initializable {
         Text ph = new Text(phoneNumber);
         ph.getStyleClass().add("itemnamephone");
 
-        Button goback = new Button("Go back");
-        Button reviews = new Button("Reviews");
-        Button checkout = new Button("Checkout");
+        Button goback = new Button(getLang().getString("goback"));
+        Button reviews = new Button(getLang().getString("reviews"));
+        Button checkout = new Button(getLang().getString("check"));
         reviews.getStyleClass().add("whitebuttonwide");
         goback.getStyleClass().add("whitebuttonwide");
         checkout.getStyleClass().add("blackbuttonwide");
@@ -197,7 +208,7 @@ public class RestaurantMenuController implements Initializable {
         });
 
         checkout.setOnMouseClicked(e -> {
-            if(checkout.getText().equals("Press to login")){
+            if(checkout.getText().equals(getLang().getString("checkptl"))){
                 Stage stage = (Stage) checkout.getScene().getWindow();
                 Parent root = null;
                 try {
@@ -211,7 +222,7 @@ public class RestaurantMenuController implements Initializable {
                 stage.setScene(scene);
             }
             if(JSONLoaded.getActiveUser()==null){
-                checkout.setText("Press to login");
+                checkout.setText(getLang().getString("checkptl"));
             }
             else if(price.get()>0){
                 Stage stage = (Stage) checkout.getScene().getWindow();
@@ -226,7 +237,7 @@ public class RestaurantMenuController implements Initializable {
                 scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
                 stage.setScene(scene);
             }
-            else checkout.setText("Add something");
+            else checkout.setText(getLang().getString("addsmth"));
         });
 
 
