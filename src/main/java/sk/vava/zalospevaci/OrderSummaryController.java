@@ -97,7 +97,10 @@ public class OrderSummaryController implements Initializable {
         Text summLabel = new Text(getLang().getString("summary"));
         Text subTotalLabel = new Text(getLang().getString("subttl"));
         Text vatInfo = new Text(getLang().getString("vat"));
-
+        if(JSONLoaded.getActiveUser().getAddress()!=null){
+            address.setText(String.valueOf(JSONLoaded.getActiveUser().getAddress()));
+        }
+        System.out.println(JSONLoaded.getActiveUser().getAddress());
         currentPrice.getStyleClass().add("label");
         addrLabel.getStyleClass().add("label");
         address.getStyleClass().add("textfieldorder");
@@ -221,7 +224,10 @@ public class OrderSummaryController implements Initializable {
                 }
             }
             String toSend = fullOrder.substring(0,fullOrder.length()-1);
-            if(orderHandler(toSend)==201){
+            if(address.getText().equals("")){
+                btnOrder.setText(getLang().getString("noaddr"));
+            }
+            else if(orderHandler(toSend,note.getText()+", "+address.getText())==201){
                 Stage stage = (Stage) btnOrder.getScene().getWindow();
                 Parent root = null;
                 try {
@@ -245,13 +251,17 @@ public class OrderSummaryController implements Initializable {
             .version(HttpClient.Version.HTTP_2)
             .build();
 
-    public int orderHandler(String order){
+    public int orderHandler(String order, String note){
+        JSONObject requestB = new JSONObject();
+        requestB.put("note", note);
+        System.out.println(requestB);
         HttpRequest request = null;
         try {
             request = HttpRequest.newBuilder()
-                    .POST(HttpRequest.BodyPublishers.ofString(""))
+                    .POST(HttpRequest.BodyPublishers.ofString(requestB.toString()))
                     .uri(new URI("http://localhost:8080/orders?items_id="+order))
                     .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
+                    .header("Content-Type", "application/json")
                     .build();
         } catch (URISyntaxException e) {
             System.out.println("error");
