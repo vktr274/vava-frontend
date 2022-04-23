@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -26,8 +27,18 @@ public class OrderDoneController implements Initializable {
     @FXML
     private VBox orderD;
 
+    private static ResourceBundle lang;
+    private void setLang(ResourceBundle lang){
+        OrderDoneController.lang = lang;
+    }
+    private ResourceBundle getLang(){
+        return OrderDoneController.lang;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale("sk", "SK"));
+        setLang(lngBndl);
         SetScreen();
     }
 
@@ -35,13 +46,13 @@ public class OrderDoneController implements Initializable {
         menuBarF();
         orderD.setSpacing(30);
         orderD.setAlignment(Pos.CENTER);
-        Text orderFinText = new Text("Thank you for your order!");
+        Text orderFinText = new Text(getLang().getString("finthanks"));
         orderFinText.getStyleClass().add("ordertoptext");
-        Text orderFinText2 = new Text("Our courier will get in touch with you soon!");
+        Text orderFinText2 = new Text(getLang().getString("fincour"));
         orderFinText2.getStyleClass().add("orderbottomtext");
-        Button backToRest = new Button("Back to Restaurants");
+        Button backToRest = new Button(getLang().getString("finback"));
         backToRest.getStyleClass().add("blackbuttonwide");
-        Button logout = new Button("Log out");
+        Button logout = new Button(getLang().getString("finlo"));
         logout.getStyleClass().add("whitebuttonwide");
         logout.setOnMouseClicked(event -> {
             JSONLoaded.setUser(null);
