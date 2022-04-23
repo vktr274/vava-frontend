@@ -99,6 +99,12 @@ public class HomeScreenController implements Initializable {
                 if(Objects.equals(user.getString("role"), "manager")) {
                     userBarManagerF();
                 }
+                if(Objects.equals(user.getString("role"), "guest")) {
+                    userBarUserF();
+                }
+                if(Objects.equals(user.getString("role"), "admin")) {
+                    userBarAdminF();
+                }
             }
         } else {
             guestBarF();
@@ -340,6 +346,150 @@ public class HomeScreenController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
+        });
+    }
+
+    public void userBarAdminF() {
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Button accountSettings = new Button("Account Settings");
+        Button manageRestaurant = new Button("Manage Restaurants");
+        Button manageUsers = new Button("Manage Users");
+
+        Button logout = new Button("Logout");
+
+        System.out.println(JSONLoaded.getActiveUser().username);
+        System.out.println(JSONLoaded.getActiveUser().role);
+
+        Pane spacer = new Pane();
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(20);
+        spacer2.setPrefHeight(15);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text(JSONLoaded.getActiveUser().username);
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
+        accountSettings.setOnMouseClicked(e -> {
+            Stage stage = (Stage) accountSettings.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("profile.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        logout.setOnMouseClicked(e -> {
+            JSONLoaded.setUser(null);
+            JSONLoaded.setActiveUser(null);
+            Stage stage = (Stage) logout.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        accountSettings.getStyleClass().add("whitebuttonmenu");
+        manageRestaurant.getStyleClass().add("whitebuttonmenu");
+        manageUsers.getStyleClass().add("whitebuttonmenu");
+        logout.getStyleClass().add("whitebuttonmenu");
+
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, logout);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
+        });
+    }
+
+    public void userBarUserF() {
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14 Close");
+        Button accountSettings = new Button("Account Settings");
+
+        Button logout = new Button("Logout");
+
+        System.out.println(JSONLoaded.getActiveUser().username);
+        System.out.println(JSONLoaded.getActiveUser().role);
+
+        Pane spacer = new Pane();
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(20);
+        spacer2.setPrefHeight(15);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text(JSONLoaded.getActiveUser().username);
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
+        accountSettings.setOnMouseClicked(e -> {
+            Stage stage = (Stage) accountSettings.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("profile.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        logout.setOnMouseClicked(e -> {
+            JSONLoaded.setUser(null);
+            JSONLoaded.setActiveUser(null);
+            Stage stage = (Stage) logout.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        accountSettings.getStyleClass().add("whitebuttonmenu");
+        logout.getStyleClass().add("whitebuttonmenu");
+
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, logout);
         userbtn.setOnMouseClicked(e -> {
             userBar.setVisible(true);
         });
