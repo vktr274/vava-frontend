@@ -116,7 +116,6 @@ public class ReviewListController implements Initializable {
         restaurantLabel.getStyleClass().add("label");
         reviews.getChildren().add(restaurantLabel);
         for(int i=0; i<array.length();i++){
-            Image image = new Image("https://i.imgur.com/Tf3j0rU.jpg");
             Pane spacer1 = new Pane();
             Pane spacer2 = new Pane();
             Pane spacer3 = new Pane();
@@ -127,10 +126,14 @@ public class ReviewListController implements Initializable {
             spacer1.setPrefWidth(0);
             spacer3.setPrefWidth(0);
             ImageView imageView = new ImageView();
-            imageView.setImage(image);
             imageView.setPreserveRatio(true);
             imageView.setFitHeight(150);
-
+            JSONArray photos = object.getJSONArray("photos");
+            //System.out.println(String.valueOf(photos) + photos.length());
+            if(photos.length()==1){
+                Image img = new Image("http://localhost:8080/photos/"+photos.getInt(0));
+                imageView.setImage(img);
+            }
             Text itemName = new Text(object.getString("username"));
             itemName.getStyleClass().add("itemname");
             Label itemDesc = new Label(object.getString("text"));

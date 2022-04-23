@@ -61,6 +61,16 @@
     -fx-font-size: 15px;
 }
 
+.score{
+    -fx-background-color: #dcdcdc;
+    -fx-background-radius: 15;
+    -fx-pref-height: 90px;
+    -fx-pref-width: 90px;
+    -fx-text-fill: black;
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+    -fx-alignment: center;
+}
 
 .itembutton{
     -fx-background-radius: 15;
