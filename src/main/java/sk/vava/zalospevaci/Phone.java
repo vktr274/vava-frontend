@@ -1,18 +1,12 @@
 package sk.vava.zalospevaci;
 
 public class Phone {
-    int id;
     String number;
     String countryCode;
 
-    public Phone(int id, String number, String countryCode) {
-        this.id = id;
+    public Phone(String number, String countryCode) {
         this.number = number;
         this.countryCode = countryCode;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getNumber() {
@@ -21,10 +15,6 @@ public class Phone {
 
     public String getCountryCode() {
         return countryCode;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setNumber(String number) {

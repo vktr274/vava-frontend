@@ -86,12 +86,12 @@ public class HomeScreenController implements Initializable {
 
                 Address address;
                 if (addressJSON != null) {
-                    address = new Address(addressJSON.getInt("id"), addressJSON.getString("name"), addressJSON.getString("street"), addressJSON.getString("city"), addressJSON.getString("state"), addressJSON.getString("postcode"), addressJSON.getString("building_number"));
+                    address = new Address(addressJSON.getString("name"), addressJSON.getString("street"), addressJSON.getString("city"), addressJSON.getString("state"), addressJSON.getString("postcode"), addressJSON.getString("building_number"));
                 } else
                     address = null;
 
                 JSONObject phoneJSON = userJSON.getJSONObject("phone");
-                Phone phone = new Phone(phoneJSON.getInt("id"), phoneJSON.getString("number"), phoneJSON.getString("country_code"));
+                Phone phone = new Phone(phoneJSON.getString("number"), phoneJSON.getString("country_code"));
 
                 User activeUser = new User(userJSON.getInt("id"), userJSON.getString("username"), userJSON.getString("email"), userJSON.getString("role"), userJSON.getBoolean("blocked"), address, phone);
                 JSONLoaded.setActiveUser(activeUser);

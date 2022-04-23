@@ -1,7 +1,6 @@
 package sk.vava.zalospevaci;
 
 public class Address {
-    int id;
     String name;
     String street;
     String city;
@@ -9,18 +8,13 @@ public class Address {
     String postcode;
     String building_number;
 
-    public Address(int id, String name, String street, String city, String state, String postcode, String building_number) {
-        this.id = id;
+    public Address(String name, String street, String city, String state, String postcode, String building_number) {
         this.name = name;
         this.street = street;
         this.city = city;
         this.state = state;
         this.postcode = postcode;
         this.building_number = building_number;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {
