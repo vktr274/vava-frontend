@@ -35,6 +35,16 @@
     -fx-alignment: center-left;
 }
 
+.ordertoptext{
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 30px;
+}
+
+.orderbottomtext{
+    -fx-font-family: "Roboto Slab ExtraBold";
+    -fx-font-size: 20px;
+}
+
 .tree{
     -fx-background-color: gray;
     -fx-pref-height: 20px;

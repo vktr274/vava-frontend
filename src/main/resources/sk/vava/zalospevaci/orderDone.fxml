@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane alignment="CENTER_LEFT" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.vava.zalospevaci.OrderDoneController">
+    <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0">
+        <children>
+            <HBox prefHeight="66.0" prefWidth="1280.0" style="-fx-background-color: #949494">
+                <children>
+                    <Button fx:id="menubtn" alignment="CENTER" mnemonicParsing="false" prefHeight="64.0" prefWidth="86.0" style="-fx-background-color: transparent" />
+                    <Pane prefHeight="73.0" prefWidth="1134.0" />
+                    <Button fx:id="userbtn" alignment="CENTER" mnemonicParsing="false" prefHeight="55.0" prefWidth="62.0" style="-fx-background-color: transparent" />
+                </children>
+            </HBox>
+         <VBox fx:id="orderD" prefHeight="679.0" prefWidth="1280.0" />
+        </children>
+    </VBox>
+    <VBox fx:id="menubar" alignment="TOP_CENTER" maxWidth="300.0" prefHeight="720.0" prefWidth="300.0" />
+</StackPane>

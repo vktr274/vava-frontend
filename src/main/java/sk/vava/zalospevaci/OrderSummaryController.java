@@ -210,7 +210,19 @@ public class OrderSummaryController implements Initializable {
                 }
             }
             String toSend = fullOrder.substring(0,fullOrder.length()-1);
-            orderHandler(toSend);
+            if(orderHandler(toSend)==201){
+                Stage stage = (Stage) btnOrder.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("orderDone.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+            }
         });
 
         subtotal.setSpacing(20);
@@ -222,7 +234,7 @@ public class OrderSummaryController implements Initializable {
             .version(HttpClient.Version.HTTP_2)
             .build();
 
-    public void orderHandler(String order){
+    public int orderHandler(String order){
         HttpRequest request = null;
         try {
             request = HttpRequest.newBuilder()
@@ -237,9 +249,11 @@ public class OrderSummaryController implements Initializable {
         try {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.statusCode());
+            return response.statusCode();
         } catch (InterruptedException | IOException e) {
             System.out.println("error");
         }
+        return 500;
     }
 
     public void menuBarF(){
