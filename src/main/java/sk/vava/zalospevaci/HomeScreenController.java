@@ -482,11 +482,25 @@ public class HomeScreenController implements Initializable {
             stage.setScene(scene);
         });
 
-        manageOrders.setOnMouseClicked(e -> {
-            Stage stage = (Stage) manageOrders.getScene().getWindow();
+        manageUsers.setOnMouseClicked(e -> {
+            Stage stage = (Stage) manageUsers.getScene().getWindow();
             Parent root = null;
             try {
-                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ordersList.fxml")));
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("userList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        manageRestaurant.setOnMouseClicked(e -> {
+            Stage stage = (Stage) manageRestaurant.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
