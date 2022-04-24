@@ -3,7 +3,6 @@ package sk.vava.zalospevaci;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,8 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.json.JSONObject;
@@ -63,7 +60,7 @@ public class AddItemController implements Initializable {
 
     private Button createButton = new Button();
 
-    public String handleCreate(String url, String name, String description, int price) {
+    public void handleCreate(String url, String name, String description, int price) {
         JSONObject requestB = new JSONObject();
 
         requestB.put("name", name);
@@ -80,7 +77,6 @@ public class AddItemController implements Initializable {
                     .build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            return "ERROR";
         }
 
         HttpResponse<String> response;
@@ -100,9 +96,8 @@ public class AddItemController implements Initializable {
                 scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
                 stage.setScene(scene);
             }
-            return response.body();
         } catch (InterruptedException | IOException e) {
-            return "ERROR";
+            e.printStackTrace();
         }
     }
 
@@ -249,12 +244,8 @@ public class AddItemController implements Initializable {
         });
         goBack.getStyleClass().add("backbutton");
         menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
-        menubtn.setOnMouseClicked(e -> {
-            menubar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            menubar.setVisible(false);
-        });
+        menubtn.setOnMouseClicked(e -> menubar.setVisible(true));
+        goBack.setOnMouseClicked(e -> menubar.setVisible(false));
         home.setOnMouseClicked(e -> {
             Stage stage = (Stage) home.getScene().getWindow();
             Parent root = null;
@@ -340,12 +331,8 @@ public class AddItemController implements Initializable {
         register.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack, spacer, userImage, userName,spacer2, login,register);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarManagerF() {
@@ -427,12 +414,8 @@ public class AddItemController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarAdminF() {
@@ -546,12 +529,8 @@ public class AddItemController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, manageOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarUserF() {
@@ -647,11 +626,7 @@ public class AddItemController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, myOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 }

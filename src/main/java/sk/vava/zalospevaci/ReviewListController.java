@@ -336,12 +336,8 @@ public class ReviewListController implements Initializable {
         });
         goBack.getStyleClass().add("backbutton");
         menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
-        menubtn.setOnMouseClicked(e -> {
-            menubar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            menubar.setVisible(false);
-        });
+        menubtn.setOnMouseClicked(e -> menubar.setVisible(true));
+        goBack.setOnMouseClicked(e -> menubar.setVisible(false));
         home.setOnMouseClicked(e -> {
             Stage stage = (Stage) home.getScene().getWindow();
             Parent root = null;
@@ -427,12 +423,8 @@ public class ReviewListController implements Initializable {
         register.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack, spacer, userImage, userName,spacer2, login,register);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarManagerF() {
@@ -514,12 +506,8 @@ public class ReviewListController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarAdminF() {
@@ -633,12 +621,8 @@ public class ReviewListController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, manageOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarUserF() {
@@ -734,11 +718,7 @@ public class ReviewListController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, myOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 }

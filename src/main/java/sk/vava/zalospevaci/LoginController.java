@@ -19,24 +19,17 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.json.JSONObject;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-
-import static java.net.http.HttpRequest.BodyPublishers.ofInputStream;
-
 
 public class LoginController implements Initializable  {
     @Override
@@ -71,7 +64,7 @@ public class LoginController implements Initializable  {
         return LoginController.lang;
     }
 
-    public String handleLogin(String url, String username, String password){
+    public void handleLogin(String url, String username, String password){
         JSONObject requestB = new JSONObject();
         requestB.put("login", username);
         requestB.put("password", password);
@@ -85,7 +78,7 @@ public class LoginController implements Initializable  {
                     .header("Content-Type", "application/json")
                     .build();
         } catch (URISyntaxException e) {
-            return "ERROR";
+            System.out.println("Error: " + e.getMessage());
         }
 
         HttpResponse<String> response;
@@ -95,15 +88,13 @@ public class LoginController implements Initializable  {
             if(response.statusCode() == 200){
                 JSONObject user = new JSONObject(response.body()).put("name", username);
                 JSONLoaded.setUser(user);
-                return response.body();
             }
             else{
                 System.out.println(response.statusCode());
             }
         } catch (InterruptedException | IOException e) {
-            return "ERROR";
+            System.out.println("Error: " + e.getMessage());
         }
-        return "ERROR";
     }
 
     public void loginScreen(){
@@ -288,12 +279,8 @@ public class LoginController implements Initializable  {
         });
         goBack.getStyleClass().add("backbutton");
         menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
-        menubtn.setOnMouseClicked(e -> {
-            menubar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            menubar.setVisible(false);
-        });
+        menubtn.setOnMouseClicked(e -> menubar.setVisible(true));
+        goBack.setOnMouseClicked(e -> menubar.setVisible(false));
         home.setOnMouseClicked(e -> {
             Stage stage = (Stage) home.getScene().getWindow();
             Parent root = null;
@@ -379,12 +366,8 @@ public class LoginController implements Initializable  {
         register.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack, spacer, userImage, userName,spacer2, login,register);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarManagerF() {
@@ -466,12 +449,8 @@ public class LoginController implements Initializable  {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarAdminF() {
@@ -585,12 +564,8 @@ public class LoginController implements Initializable  {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, manageOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarUserF() {
@@ -686,11 +661,7 @@ public class LoginController implements Initializable  {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, myOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 }
