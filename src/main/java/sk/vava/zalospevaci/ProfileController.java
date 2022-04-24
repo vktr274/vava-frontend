@@ -494,6 +494,17 @@ public class ProfileController implements Initializable {
 
             if(editingPassword){
                 newPassword = password.getText();
+
+                //password regex
+                if (!newPassword.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Error");
+                    alert.setContentText(getLang().getString("validpassword"));
+                    alert.showAndWait();
+                    return;
+                }
+
                 //hash to md5
                 try {
                     MessageDigest md = MessageDigest.getInstance("MD5");
