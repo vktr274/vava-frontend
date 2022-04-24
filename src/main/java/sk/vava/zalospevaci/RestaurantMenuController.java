@@ -149,6 +149,23 @@ public class RestaurantMenuController implements Initializable {
             menu.getChildren().add(itemMenu);
         }
 
+        Button item = new Button("add");
+        item.setOnMouseClicked(e ->{
+            Stage stage = (Stage) item.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("addItem.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        menu.getChildren().add(item);
+
         Pane spacer1 = new Pane();
         spacer1.setPrefHeight(0);
         Pane spacer2 = new Pane();
