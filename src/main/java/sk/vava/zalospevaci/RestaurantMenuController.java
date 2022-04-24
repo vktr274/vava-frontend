@@ -145,26 +145,16 @@ public class RestaurantMenuController implements Initializable {
             texts.getChildren().addAll(itemName,itemDesc);
 
             itemMenu.getStyleClass().add("menuitem");
-            itemMenu.getChildren().addAll(spacer1,texts,spacer2,removeFromCart,addToCart,spacer3);
+            Text itemPrice = new Text(addToCart.getText());
+            itemPrice.getStyleClass().add("itemname");
+            if(JSONLoaded.getActiveUser()!=null && Objects.equals(JSONLoaded.getActiveUser().role, "admin") || JSONLoaded.getIsManaging()){
+                itemMenu.getChildren().addAll(spacer1,texts,spacer2,itemPrice,spacer3);
+            }
+            else{
+                itemMenu.getChildren().addAll(spacer1,texts,spacer2,removeFromCart,addToCart,spacer3);
+            }
             menu.getChildren().add(itemMenu);
         }
-
-        Button item = new Button("add");
-        item.setOnMouseClicked(e ->{
-            Stage stage = (Stage) item.getScene().getWindow();
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("addItem.fxml")));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            assert root != null;
-            Scene scene = new Scene(root, 1280, 720);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
-            stage.setScene(scene);
-        });
-
-        menu.getChildren().add(item);
 
         Pane spacer1 = new Pane();
         spacer1.setPrefHeight(0);
@@ -223,13 +213,15 @@ public class RestaurantMenuController implements Initializable {
                 stage.setScene(scene);
 
         });
-
+        if(JSONLoaded.getActiveUser()!=null && Objects.equals(JSONLoaded.getActiveUser().role, "admin") || JSONLoaded.getIsManaging()){
+            checkout.setText(getLang().getString("mngradd"));
+        }
         checkout.setOnMouseClicked(e -> {
-            if(checkout.getText().equals(getLang().getString("checkptl"))){
+            if(JSONLoaded.getActiveUser()!=null && Objects.equals(JSONLoaded.getActiveUser().role, "admin") || JSONLoaded.getIsManaging()){
                 Stage stage = (Stage) checkout.getScene().getWindow();
                 Parent root = null;
                 try {
-                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("login.fxml")));
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("addItem.fxml")));
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -238,29 +230,50 @@ public class RestaurantMenuController implements Initializable {
                 scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
                 stage.setScene(scene);
             }
-            if(JSONLoaded.getActiveUser()==null){
-                checkout.setText(getLang().getString("checkptl"));
-            }
-            else if(price.get()>0){
-                Stage stage = (Stage) checkout.getScene().getWindow();
-                Parent root = null;
-                try {
-                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("orderSummary.fxml")));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+            else{
+                if(checkout.getText().equals(getLang().getString("checkptl"))){
+                    Stage stage = (Stage) checkout.getScene().getWindow();
+                    Parent root = null;
+                    try {
+                        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("login.fxml")));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    assert root != null;
+                    Scene scene = new Scene(root, 1280, 720);
+                    scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                    stage.setScene(scene);
                 }
-                assert root != null;
-                Scene scene = new Scene(root, 1280, 720);
-                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
-                stage.setScene(scene);
+                if(JSONLoaded.getActiveUser()==null){
+                    checkout.setText(getLang().getString("checkptl"));
+                }
+                else if(price.get()>0){
+                    Stage stage = (Stage) checkout.getScene().getWindow();
+                    Parent root = null;
+                    try {
+                        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("orderSummary.fxml")));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    assert root != null;
+                    Scene scene = new Scene(root, 1280, 720);
+                    scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                    stage.setScene(scene);
+                }
+                else checkout.setText(getLang().getString("addsmth"));
             }
-            else checkout.setText(getLang().getString("addsmth"));
         });
 
 
         restInfo.setSpacing(20);
         restInfo.setAlignment(Pos.TOP_CENTER);
-        restInfo.getChildren().addAll(spacer1,rN,addr,ph,spacer3,currentPrice,goback,reviews,checkout,spacer2);
+        if(JSONLoaded.getActiveUser()!=null && Objects.equals(JSONLoaded.getActiveUser().role, "admin") || JSONLoaded.getIsManaging()){
+            restInfo.getChildren().addAll(spacer1,rN,addr,ph,spacer3,goback,reviews,checkout,spacer2);
+        }
+        else{
+            restInfo.getChildren().addAll(spacer1,rN,addr,ph,spacer3,currentPrice,goback,reviews,checkout,spacer2);
+        }
+
 
     }
 
