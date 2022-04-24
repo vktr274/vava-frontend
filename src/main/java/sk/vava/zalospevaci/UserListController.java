@@ -224,9 +224,11 @@ public class UserListController implements Initializable {
         if(getBlocked().equals("true")) blockbtn.setText(getLang().getString("bls"));
         if(getBlocked().equals("")) blockbtn.setText(getLang().getString("als"));
         blockbtn.setOnMouseClicked(event -> {
-            if(getBlocked().equals("false")) setBlocked("true");
-            else if(getBlocked().equals("true")) setBlocked("");
-            else if(getBlocked().equals("")) setBlocked("false");
+            switch (getBlocked()) {
+                case "false" -> setBlocked("true");
+                case "true" -> setBlocked("");
+                case "" -> setBlocked("false");
+            }
             restaurantSetScreen();
         });
 
@@ -269,10 +271,12 @@ public class UserListController implements Initializable {
             restaurantLabel.setText(getLang().getString("ual"));
         }
         role.setOnMouseClicked(event -> {
-            if(getRole().equals("guest")) setRole("manager");
-            else if(getRole().equals("manager")) setRole("admin");
-            else if(getRole().equals("admin")) setRole("");
-            else if(getRole().equals("")) setRole("guest");
+            switch (getRole()) {
+                case "guest" -> setRole("manager");
+                case "manager" -> setRole("admin");
+                case "admin" -> setRole("");
+                case "" -> setRole("guest");
+            }
             restaurantSetScreen();
         });
 
@@ -432,12 +436,8 @@ public class UserListController implements Initializable {
         });
         goBack.getStyleClass().add("backbutton");
         menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
-        menubtn.setOnMouseClicked(e -> {
-            menubar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            menubar.setVisible(false);
-        });
+        menubtn.setOnMouseClicked(e -> menubar.setVisible(true));
+        goBack.setOnMouseClicked(e -> menubar.setVisible(false));
         home.setOnMouseClicked(e -> {
             Stage stage = (Stage) home.getScene().getWindow();
             Parent root = null;
@@ -523,12 +523,8 @@ public class UserListController implements Initializable {
         register.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack, spacer, userImage, userName,spacer2, login,register);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarManagerF() {
@@ -610,12 +606,8 @@ public class UserListController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarAdminF() {
@@ -729,12 +721,8 @@ public class UserListController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, manageOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarUserF() {
@@ -830,11 +818,7 @@ public class UserListController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, myOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 }

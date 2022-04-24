@@ -66,14 +66,14 @@ public class RegisterController implements Initializable {
 
     private boolean successful;
 
-    public String handleRegister(String url, String username, String password, String email, boolean isManager, String countryCode, String number){
-        if (username == "" || password == "" || email == "" || countryCode == "" || number == "") {
+    public void handleRegister(String url, String username, String password, String email, boolean isManager, String countryCode, String number){
+        if (Objects.equals(username, "") || Objects.equals(password, "") || Objects.equals(email, "") || Objects.equals(countryCode, "") || Objects.equals(number, "")) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Empty fields");
             alert.setHeaderText("Empty fields");
             alert.setContentText("Please fill all fields");
             alert.showAndWait();
-            return null;
+            return;
         }
 
         //check if email is in correct format
@@ -83,7 +83,7 @@ public class RegisterController implements Initializable {
             alert.setHeaderText("Invalid email");
             alert.setContentText("Please enter a valid email");
             alert.showAndWait();
-            return null;
+            return;
         }
 
         //check if number is in correct format
@@ -93,7 +93,7 @@ public class RegisterController implements Initializable {
             alert.setHeaderText("Invalid number");
             alert.setContentText("Please enter a valid number");
             alert.showAndWait();
-            return null;
+            return;
         }
 
         //check if country code is in correct format
@@ -103,7 +103,7 @@ public class RegisterController implements Initializable {
             alert.setHeaderText("Invalid country code");
             alert.setContentText("Please enter a valid country code");
             alert.showAndWait();
-            return null;
+            return;
         }
 
         JSONObject requestB = new JSONObject();
@@ -129,7 +129,6 @@ public class RegisterController implements Initializable {
                     .build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            return "ERROR";
         }
 
         HttpResponse<String> response;
@@ -140,9 +139,8 @@ public class RegisterController implements Initializable {
                 System.out.println(response.statusCode());
                 System.out.println(response.body());
             }
-            return response.body();
         } catch (InterruptedException | IOException e) {
-            return "ERROR";
+            e.printStackTrace();
         }
     }
 
@@ -340,12 +338,8 @@ public class RegisterController implements Initializable {
         });
         goBack.getStyleClass().add("backbutton");
         menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
-        menubtn.setOnMouseClicked(e -> {
-            menubar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            menubar.setVisible(false);
-        });
+        menubtn.setOnMouseClicked(e -> menubar.setVisible(true));
+        goBack.setOnMouseClicked(e -> menubar.setVisible(false));
         home.setOnMouseClicked(e -> {
             Stage stage = (Stage) home.getScene().getWindow();
             Parent root = null;
@@ -431,12 +425,8 @@ public class RegisterController implements Initializable {
         register.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack, spacer, userImage, userName,spacer2, login,register);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarManagerF() {
@@ -518,12 +508,8 @@ public class RegisterController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarAdminF() {
@@ -637,12 +623,8 @@ public class RegisterController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, manageOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarUserF() {
@@ -738,11 +720,7 @@ public class RegisterController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, myOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 }

@@ -8,9 +8,7 @@ import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -312,9 +310,11 @@ public class RestaurantListController implements Initializable {
         if(JSONLoaded.getActiveUser() != null){
             if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")){
                 blockbtn.setOnMouseClicked(event -> {
-                    if(getBlocked().equals("false")) setBlocked("true");
-                    else if(getBlocked().equals("true")) setBlocked("");
-                    else if(getBlocked().equals("")) setBlocked("false");
+                    switch (getBlocked()) {
+                        case "false" -> setBlocked("true");
+                        case "true" -> setBlocked("");
+                        case "" -> setBlocked("false");
+                    }
                     restaurantSetScreen();
                 });
             }
@@ -555,12 +555,8 @@ public class RestaurantListController implements Initializable {
         });
         goBack.getStyleClass().add("backbutton");
         menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
-        menubtn.setOnMouseClicked(e -> {
-            menubar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            menubar.setVisible(false);
-        });
+        menubtn.setOnMouseClicked(e -> menubar.setVisible(true));
+        goBack.setOnMouseClicked(e -> menubar.setVisible(false));
         home.setOnMouseClicked(e -> {
             Stage stage = (Stage) home.getScene().getWindow();
             Parent root = null;
@@ -646,12 +642,8 @@ public class RestaurantListController implements Initializable {
         register.getStyleClass().add("whitebuttonmenu");
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack, spacer, userImage, userName,spacer2, login,register);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarManagerF() {
@@ -733,12 +725,8 @@ public class RestaurantListController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarAdminF() {
@@ -852,12 +840,8 @@ public class RestaurantListController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, manageOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 
     public void userBarUserF() {
@@ -953,11 +937,7 @@ public class RestaurantListController implements Initializable {
 
         goBack.getStyleClass().add("backbutton");
         userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, myOrders, logout);
-        userbtn.setOnMouseClicked(e -> {
-            userBar.setVisible(true);
-        });
-        goBack.setOnMouseClicked(e -> {
-            userBar.setVisible(false);
-        });
+        userbtn.setOnMouseClicked(e -> userBar.setVisible(true));
+        goBack.setOnMouseClicked(e -> userBar.setVisible(false));
     }
 }
