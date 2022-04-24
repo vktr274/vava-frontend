@@ -113,6 +113,7 @@ public class RestaurantListController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
+        setName(JSONLoaded.getSearch());
         setLang(lngBndl);
         restaurantSetScreen();
     }

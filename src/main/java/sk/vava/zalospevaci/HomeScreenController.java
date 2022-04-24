@@ -19,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -134,6 +135,22 @@ public class HomeScreenController implements Initializable {
         brandLabel.getStyleClass().add("brandLabel");
         searchInput.getStyleClass().add("searchInput");
         searchInput.setPromptText(getLang().getString("srch"));
+        searchInput.setOnKeyPressed( event -> {
+            if( event.getCode() == KeyCode.ENTER ) {
+                JSONLoaded.setSearch(searchInput.getText());
+                Stage stage = (Stage) searchInput.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+            }
+        } );
 
         inputPane.getChildren().addAll(searchInput, searchButton);
 

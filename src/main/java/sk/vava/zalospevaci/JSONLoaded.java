@@ -10,6 +10,14 @@ public class JSONLoaded {
     private static String lang;
     private static String country;
     private static boolean isManaging;
+    private static String search = "";
+
+    public static void setSearch(String search){
+        JSONLoaded.search = search;
+    }
+    public static String getSearch(){
+        return JSONLoaded.search;
+    }
 
     public static void setIsManaging(boolean managing){
         JSONLoaded.isManaging = managing;
