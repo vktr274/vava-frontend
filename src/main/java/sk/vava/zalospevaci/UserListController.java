@@ -224,11 +224,9 @@ public class UserListController implements Initializable {
         if(getBlocked().equals("true")) blockbtn.setText(getLang().getString("bls"));
         if(getBlocked().equals("")) blockbtn.setText(getLang().getString("als"));
         blockbtn.setOnMouseClicked(event -> {
-            switch (getBlocked()) {
-                case "false": setBlocked("true");
-                case "true": setBlocked("");
-                case "": setBlocked("false");
-            }
+            if(getBlocked().equals("false")) setBlocked("true");
+            else if(getBlocked().equals("true")) setBlocked("");
+            else if(getBlocked().equals("")) setBlocked("false");
             restaurantSetScreen();
         });
 
@@ -271,12 +269,10 @@ public class UserListController implements Initializable {
             restaurantLabel.setText(getLang().getString("ual"));
         }
         role.setOnMouseClicked(event -> {
-            switch (getRole()) {
-                case "guest": setRole("manager");
-                case "manager": setRole("admin");
-                case "admin": setRole("");
-                case "": setRole("guest");
-            }
+            if(getRole().equals("guest")) setRole("manager");
+            else if(getRole().equals("manager")) setRole("admin");
+            else if(getRole().equals("admin")) setRole("");
+            else if(getRole().equals("")) setRole("guest");
             restaurantSetScreen();
         });
 

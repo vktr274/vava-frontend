@@ -310,11 +310,9 @@ public class RestaurantListController implements Initializable {
         if(JSONLoaded.getActiveUser() != null){
             if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")){
                 blockbtn.setOnMouseClicked(event -> {
-                    switch (getBlocked()) {
-                        case "false": setBlocked("true");
-                        case "true": setBlocked("");
-                        case "": setBlocked("false");
-                    }
+                    if(getBlocked().equals("false")) setBlocked("true");
+                    else if(getBlocked().equals("true")) setBlocked("");
+                    else if(getBlocked().equals("")) setBlocked("false");
                     restaurantSetScreen();
                 });
             }
