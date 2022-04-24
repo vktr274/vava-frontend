@@ -133,7 +133,7 @@ public class HomeScreenController implements Initializable {
 
         brandLabel.getStyleClass().add("brandLabel");
         searchInput.getStyleClass().add("searchInput");
-        searchInput.setPromptText("Search...");
+        searchInput.setPromptText(getLang().getString("srch"));
 
         inputPane.getChildren().addAll(searchInput, searchButton);
 
@@ -263,7 +263,7 @@ public class HomeScreenController implements Initializable {
         userBar.getStyleClass().add("menubar");
         userBar.setVisible(false);
         userBar.setSpacing(20);
-        Button goBack = new Button("\uD83E\uDC14 Close");
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
         Pane spacer = new Pane();
         Pane spacer2 = new Pane();
         spacer.setPrefHeight(40);
@@ -273,14 +273,14 @@ public class HomeScreenController implements Initializable {
         Image image = new Image(imageFile.toURI().toString());
         ImageView userImage = new ImageView(image);
 
-        Text userName = new Text("Guest");
+        Text userName = new Text(getLang().getString("guestt"));
 
         userImage.setFitHeight(130);
         userImage.setFitWidth(130);
         userImage.setPreserveRatio(true);
 
-        Button login = new Button("Login");
-        Button register = new Button("Register");
+        Button login = new Button(getLang().getString("lgn"));
+        Button register = new Button(getLang().getString("rgs"));
 
         login.setOnMouseClicked(e -> {
             Stage stage = (Stage) login.getScene().getWindow();
@@ -327,10 +327,10 @@ public class HomeScreenController implements Initializable {
         userBar.getStyleClass().add("menubar");
         userBar.setVisible(false);
         userBar.setSpacing(20);
-        Button goBack = new Button("\uD83E\uDC14 Close");
-        Button accountSettings = new Button("Account Settings");
-        Button manageRestaurant = new Button("Manage Restaurant");
-        Button logout = new Button("Logout");
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
+        Button accountSettings = new Button(getLang().getString("accset"));
+        Button manageRestaurant = new Button(getLang().getString("mngres"));
+        Button logout = new Button(getLang().getString("lgo"));
 
         System.out.println(JSONLoaded.getActiveUser().username);
         System.out.println(JSONLoaded.getActiveUser().role);
@@ -399,12 +399,13 @@ public class HomeScreenController implements Initializable {
         userBar.getStyleClass().add("menubar");
         userBar.setVisible(false);
         userBar.setSpacing(20);
-        Button goBack = new Button("\uD83E\uDC14 Close");
-        Button accountSettings = new Button("Account Settings");
-        Button manageRestaurant = new Button("Manage Restaurants");
-        Button manageUsers = new Button("Manage Users");
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
+        Button accountSettings = new Button(getLang().getString("accset"));
+        Button manageRestaurant = new Button(getLang().getString("mngresall"));
+        Button manageUsers = new Button(getLang().getString("mngusr"));
+        Button manageOrders = new Button(getLang().getString("mngord"));
 
-        Button logout = new Button("Logout");
+        Button logout = new Button(getLang().getString("lgo"));
 
         System.out.println(JSONLoaded.getActiveUser().username);
         System.out.println(JSONLoaded.getActiveUser().role);
@@ -445,6 +446,20 @@ public class HomeScreenController implements Initializable {
             Parent root = null;
             try {
                 root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        manageOrders.setOnMouseClicked(e -> {
+            Stage stage = (Stage) manageOrders.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ordersList.fxml")));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -458,9 +473,10 @@ public class HomeScreenController implements Initializable {
         manageRestaurant.getStyleClass().add("whitebuttonmenu");
         manageUsers.getStyleClass().add("whitebuttonmenu");
         logout.getStyleClass().add("whitebuttonmenu");
+        manageOrders.getStyleClass().add("whitebuttonmenu");
 
         goBack.getStyleClass().add("backbutton");
-        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, logout);
+        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, manageOrders, logout);
         userbtn.setOnMouseClicked(e -> {
             userBar.setVisible(true);
         });
@@ -474,10 +490,11 @@ public class HomeScreenController implements Initializable {
         userBar.getStyleClass().add("menubar");
         userBar.setVisible(false);
         userBar.setSpacing(20);
-        Button goBack = new Button("\uD83E\uDC14 Close");
-        Button accountSettings = new Button("Account Settings");
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
+        Button accountSettings = new Button(getLang().getString("accset"));
+        Button myOrders = new Button(getLang().getString("myord"));
 
-        Button logout = new Button("Logout");
+        Button logout = new Button(getLang().getString("lgo"));
 
         System.out.println(JSONLoaded.getActiveUser().username);
         System.out.println(JSONLoaded.getActiveUser().role);
@@ -527,11 +544,26 @@ public class HomeScreenController implements Initializable {
             stage.setScene(scene);
         });
 
+        myOrders.setOnMouseClicked(e -> {
+            Stage stage = (Stage) myOrders.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ordersList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
         accountSettings.getStyleClass().add("whitebuttonmenu");
         logout.getStyleClass().add("whitebuttonmenu");
+        myOrders.getStyleClass().add("whitebuttonmenu");
 
         goBack.getStyleClass().add("backbutton");
-        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, logout);
+        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, myOrders, logout);
         userbtn.setOnMouseClicked(e -> {
             userBar.setVisible(true);
         });
