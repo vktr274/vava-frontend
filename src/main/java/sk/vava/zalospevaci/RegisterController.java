@@ -69,9 +69,9 @@ public class RegisterController implements Initializable {
     public void handleRegister(String url, String username, String password, String email, boolean isManager, String countryCode, String number){
         if (Objects.equals(username, "") || Objects.equals(password, "") || Objects.equals(email, "") || Objects.equals(countryCode, "") || Objects.equals(number, "")) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Empty fields");
-            alert.setHeaderText("Empty fields");
-            alert.setContentText("Please fill all fields");
+            alert.setTitle("Error");
+            alert.setHeaderText("Error");
+            alert.setContentText(getLang().getString("fillall"));
             alert.showAndWait();
             return;
         }
@@ -79,19 +79,9 @@ public class RegisterController implements Initializable {
         //check if email is in correct format
         if (!email.contains("@") || !email.contains(".")) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Invalid email");
-            alert.setHeaderText("Invalid email");
-            alert.setContentText("Please enter a valid email");
-            alert.showAndWait();
-            return;
-        }
-
-        //check if number is in correct format
-        if (!number.matches("[0-9]+") || number.length() != 9) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Invalid number");
-            alert.setHeaderText("Invalid number");
-            alert.setContentText("Please enter a valid number");
+            alert.setTitle("Error");
+            alert.setHeaderText("Error");
+            alert.setContentText(getLang().getString("validemail"));
             alert.showAndWait();
             return;
         }
@@ -99,9 +89,19 @@ public class RegisterController implements Initializable {
         //check if country code is in correct format
         if (!countryCode.matches("\\+[0-9]+") || countryCode.length() > 4) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Invalid country code");
-            alert.setHeaderText("Invalid country code");
-            alert.setContentText("Please enter a valid country code");
+            alert.setTitle("Error");
+            alert.setHeaderText("Error");
+            alert.setContentText(getLang().getString("validcountrycode"));
+            alert.showAndWait();
+            return;
+        }
+
+        //check if number is in correct format
+        if (!number.matches("[0-9]+") || number.length() != 9) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error");
+            alert.setContentText(getLang().getString("validphone"));
             alert.showAndWait();
             return;
         }
@@ -250,6 +250,16 @@ public class RegisterController implements Initializable {
 
         registerButton.setOnMouseClicked(e -> {
             String hashedPassword = password.getText();
+
+            //password regex
+            if (!hashedPassword.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Error");
+                alert.setContentText(getLang().getString("validpassword"));
+                alert.showAndWait();
+                return;
+            }
 
             //hash md5
             try {
