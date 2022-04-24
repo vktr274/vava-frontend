@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -105,7 +106,7 @@ public class OrdersListController implements Initializable {
         restFilt.getChildren().clear();
         JSONObject full = new JSONObject(getJSON("http://localhost:8080/orders?&per_page="+getPerpage()+"&page="+getPage()));
         JSONObject metadata = full.getJSONObject("metadata");
-        JSONArray array = full.getJSONArray("restaurants");
+        JSONArray array = full.getJSONArray("orders");
         setElements(metadata.getInt("total_elements"));
         setTotalpg(metadata.getInt("total_pages"));
         Text ordersLabel = new Text("Orders");
@@ -149,16 +150,16 @@ public class OrdersListController implements Initializable {
             });
 
 
-/*            byte[] emojiByteCode = new byte[]{(byte)0xE2, (byte)0xAD, (byte)0x90};
-            String emoji = new String(emojiByteCode, StandardCharsets.UTF_8);*/
+            byte[] emojiByteCode = new byte[]{(byte)0xE2, (byte)0xAD, (byte)0x90};
+            String emoji = new String(emojiByteCode, StandardCharsets.UTF_8);
             Label priceText = new Label();
             BigDecimal price;
-            if(object.get("rating")!=JSONObject.NULL){
+            if(object.get("price")!=JSONObject.NULL){
                 price = (object.getBigDecimal("price").divide(new BigDecimal(100), 1, RoundingMode.HALF_EVEN));
-                priceText.setText(price.toString() + " €");
+                priceText.setText(price + " \u20ac");
             }
             else priceText.setText("No\nreviews");
-            System.out.println(object.get("rating").getClass().getName());
+            System.out.println(object.get("price").getClass().getName());
             priceText.getStyleClass().add("price");
 
             VBox orderBox = new VBox();
@@ -182,21 +183,18 @@ public class OrdersListController implements Initializable {
             else order.getChildren().addAll(spacer1,priceText,orderBox,spacer2,spacer3);
 
 
-            // Uncomment to add Order screen on click
-            /*order.setOnMouseClicked(e -> {
-                JSONLoaded.setRestaurant(object);
-                Stage stage = (Stage) order.getScene().getWindow();
-                Parent root = null;
-                try {
-                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantMenu.fxml")));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+            order.setOnMouseClicked(e -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Order Contents");
+                alert.setHeaderText("This order contained:");
+                JSONArray items = object.getJSONArray("items");
+                StringBuilder itemstring = new StringBuilder();
+                for (int j = 0; j < items.length(); j++) {
+                    itemstring.append(items.getString(j)).append("\n");
                 }
-                assert root != null;
-                Scene scene = new Scene(root, 1280, 720);
-                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
-                stage.setScene(scene);
-            });*/
+                alert.setContentText(String.valueOf(itemstring));
+                alert.showAndWait();
+            });
 
             tree.getChildren().add(order);
         }
