@@ -179,8 +179,6 @@ public class HomeScreenController implements Initializable {
                 stage.setScene(scene);
             });
         }
-
-
     }
 
     public void menuBarF(){
@@ -380,6 +378,21 @@ public class HomeScreenController implements Initializable {
             stage.setScene(scene);
         });
 
+        manageRestaurant.setOnMouseClicked(e -> {
+            Stage stage = (Stage) manageRestaurant.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("createRestaurant.fxml")));
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
         accountSettings.getStyleClass().add("whitebuttonmenu");
         manageRestaurant.getStyleClass().add("whitebuttonmenu");
         logout.getStyleClass().add("whitebuttonmenu");
@@ -469,6 +482,20 @@ public class HomeScreenController implements Initializable {
             stage.setScene(scene);
         });
 
+        manageOrders.setOnMouseClicked(e -> {
+            Stage stage = (Stage) manageOrders.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ordersList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
         accountSettings.getStyleClass().add("whitebuttonmenu");
         manageRestaurant.getStyleClass().add("whitebuttonmenu");
         manageUsers.getStyleClass().add("whitebuttonmenu");
@@ -535,6 +562,20 @@ public class HomeScreenController implements Initializable {
             Parent root = null;
             try {
                 root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        myOrders.setOnMouseClicked(e -> {
+            Stage stage = (Stage) myOrders.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ordersList.fxml")));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

@@ -159,6 +159,8 @@ public class LoginController implements Initializable  {
                 ex.printStackTrace();
             }
 
+            System.out.println("hash: " + hashedPassword);
+
             handleLogin("http://localhost:8080/token", username.getText(), hashedPassword);
             JSONObject user = JSONLoaded.getUser();
             if (user != null && !Objects.equals(user.getString("token"), "")) {
