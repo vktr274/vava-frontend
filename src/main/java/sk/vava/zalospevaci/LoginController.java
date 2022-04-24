@@ -165,13 +165,13 @@ public class LoginController implements Initializable  {
 
         TextField username = new TextField();
         username.getStyleClass().add("formInput");
-        username.setPromptText("Username...");
+        username.setPromptText(getLang().getString("usrnm")+"...");
         username.setPrefWidth(360);
         username.setMaxWidth(360);
 
         PasswordField password = new PasswordField();
         password.getStyleClass().add("formInput");
-        password.setPromptText("Password...");
+        password.setPromptText(getLang().getString("pass")+"...");
         password.setPrefWidth(360);
         password.setMaxWidth(360);
 
@@ -215,14 +215,14 @@ public class LoginController implements Initializable  {
             else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
-                alert.setHeaderText("Invalid Credentials");
-                alert.setContentText("Please check your username and password and try again.");
+                alert.setHeaderText("Error");
+                alert.setContentText(getLang().getString("invalidcred"));
                 alert.showAndWait();
             }
         });
 
-        Text or = new Text("or");
-        Button createAccount = new Button("Create Account");
+        Text or = new Text(getLang().getString("or?"));
+        Button createAccount = new Button(getLang().getString("crtacc"));
         createAccount.getStyleClass().add("altButton");
 
         createAccount.setOnMouseClicked(e -> {

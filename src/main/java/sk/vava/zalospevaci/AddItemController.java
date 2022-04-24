@@ -61,7 +61,7 @@ public class AddItemController implements Initializable {
             .version(HttpClient.Version.HTTP_2)
             .build();
 
-    private Button createButton = new Button("Create");
+    private Button createButton = new Button();
 
     public String handleCreate(String url, String name, String description, int price) {
         JSONObject requestB = new JSONObject();
@@ -124,6 +124,8 @@ public class AddItemController implements Initializable {
             guestBarF();
         }
 
+        createButton.setText(getLang().getString("create"));
+
         menuBarF();
 
         container.getChildren().add(form);
@@ -138,7 +140,7 @@ public class AddItemController implements Initializable {
         form.getStyleClass().add("form");
 
         StackPane titlePane = new StackPane();
-        Text label = new Text("Create item");
+        Text label = new Text(getLang().getString("additem"));
         label.getStyleClass().add("formTitle");
 
         Button goBack = new Button("X");
@@ -164,13 +166,13 @@ public class AddItemController implements Initializable {
 
         TextField name = new TextField();
         name.getStyleClass().add("formInput");
-        name.setPromptText("name");
+        name.setPromptText(getLang().getString("title"));
         name.setPrefWidth(360);
         name.setMaxWidth(360);
 
         TextArea description = new TextArea();
         description.getStyleClass().add("formInput");
-        description.setPromptText("decription");
+        description.setPromptText(getLang().getString("desc"));
         description.setPrefWidth(360);
         description.setMaxWidth(360);
 
@@ -178,7 +180,7 @@ public class AddItemController implements Initializable {
 
         TextField price = new TextField();
         price.getStyleClass().add("formInput");
-        price.setPromptText("price");
+        price.setPromptText(getLang().getString("prce"));
         price.setPrefWidth(150);
         price.setMaxWidth(150);
 
@@ -196,7 +198,7 @@ public class AddItemController implements Initializable {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("Error");
-                alert.setContentText("Please fill in all fields");
+                alert.setContentText(getLang().getString("fillall"));
                 alert.showAndWait();
             }
 

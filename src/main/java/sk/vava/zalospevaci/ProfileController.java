@@ -110,9 +110,9 @@ public class ProfileController implements Initializable {
         }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Success");
-        alert.setHeaderText("Account information changed");
-        alert.setContentText("Your account information has been changed successfully!");
+        alert.setTitle(getLang().getString("success"));
+        alert.setHeaderText(getLang().getString("success"));
+        alert.setContentText(getLang().getString("changedinfo"));
         alert.showAndWait();
 
         buttonsHBox.setVisible(false);
@@ -216,7 +216,7 @@ public class ProfileController implements Initializable {
         usernameHBox.setAlignment(Pos.CENTER);
         usernameHBox.setSpacing(10);
 
-        Button editUsernameButton = new Button("Edit");
+        Button editUsernameButton = new Button(getLang().getString("edit"));
         editUsernameButton.getStyleClass().add("profileButton");
 
         usernameLabel.setText(user.getUsername());
@@ -234,7 +234,7 @@ public class ProfileController implements Initializable {
         emailHBox.setAlignment(Pos.CENTER);
         emailHBox.setSpacing(10);
 
-        Button editEmailButton = new Button("Edit");
+        Button editEmailButton = new Button(getLang().getString("edit"));
         editEmailButton.getStyleClass().add("profileButton");
 
         emailLabel.setText(user.getEmail());
@@ -261,9 +261,9 @@ public class ProfileController implements Initializable {
         addressTitleHBox.setSpacing(200);
         addressTitleHBox.setPrefWidth(500);
 
-        Text addressTitle = new Text("Address");
+        Text addressTitle = new Text(getLang().getString("addr"));
         addressTitle.getStyleClass().add("formTitle");
-        Button editAddressButton = new Button("Edit address");
+        Button editAddressButton = new Button(getLang().getString("editaddr"));
         editAddressButton.getStyleClass().add("profileButton");
         addressTitleHBox.getChildren().addAll(addressTitle, editAddressButton);
 
@@ -279,7 +279,7 @@ public class ProfileController implements Initializable {
             postalcode.setText(user.getAddress().getPostcode());
         }
 
-        name.setPromptText("Name");
+        name.setPromptText(getLang().getString("title"));
         name.setPrefWidth(350);
         name.getStyleClass().add("formInput");
 
@@ -292,8 +292,8 @@ public class ProfileController implements Initializable {
         street.setPrefWidth(200);
         building_number.setPrefWidth(140);
 
-        street.setPromptText("Street");
-        building_number.setPromptText("Build. no.");
+        street.setPromptText(getLang().getString("strt"));
+        building_number.setPromptText(getLang().getString("buildno"));
 
         street.getStyleClass().add("formInput");
         building_number.getStyleClass().add("formInput");
@@ -306,8 +306,8 @@ public class ProfileController implements Initializable {
         city.setPrefWidth(170);
         state.setPrefWidth(170);
 
-        city.setPromptText("City");
-        state.setPromptText("State");
+        city.setPromptText(getLang().getString("cty"));
+        state.setPromptText(getLang().getString("cntry"));
 
         city.getStyleClass().add("formInput");
         state.getStyleClass().add("formInput");
@@ -317,14 +317,14 @@ public class ProfileController implements Initializable {
         HBox addr4 = new HBox();
         addr4.setAlignment(Pos.CENTER);
 
-        postalcode.setPromptText("Postal code");
+        postalcode.setPromptText(getLang().getString("zip"));
         postalcode.getStyleClass().add("formInput");
 
         addr4.getChildren().add(postalcode);
 
         addressesVBox.getChildren().addAll(addr1, addr2, addr3, addr4);
-        Text passwordLabel = new Text("Password");
-        Button changePasswordButton = new Button("Change password");
+        Text passwordLabel = new Text(getLang().getString("cappass"));
+        Button changePasswordButton = new Button(getLang().getString("chngpass"));
 
         passwordLabel.getStyleClass().add("formTitle");
         changePasswordButton.getStyleClass().add("profileButton");
@@ -340,7 +340,7 @@ public class ProfileController implements Initializable {
         passwordHBox.getChildren().addAll(passwordLabel, changePasswordButton);
 
         PasswordField password = new PasswordField();
-        password.setPromptText("Password");
+        password.setPromptText(getLang().getString("pass"));
         password.getStyleClass().add("formInput");
         password.setPrefWidth(350);
 
@@ -349,8 +349,8 @@ public class ProfileController implements Initializable {
 
         passwordFieldHBox.setVisible(false);
 
-        Button discardButton = new Button("Discard");
-        Button ConfirmButton = new Button("Confirm");
+        Button discardButton = new Button(getLang().getString("dscard"));
+        Button ConfirmButton = new Button(getLang().getString("cnfirm"));
 
         discardButton.getStyleClass().add("profileButton");
         ConfirmButton.getStyleClass().add("profileButton");
@@ -384,12 +384,14 @@ public class ProfileController implements Initializable {
             state.setDisable(true);
             postalcode.setDisable(true);
 
-            name.setText(user.getAddress().getName() != null ? user.getAddress().getName() : "");
-            street.setText(user.getAddress().getStreet() != null ? user.getAddress().getStreet() : "");
-            building_number.setText(user.getAddress().getBuilding_number() != null ? user.getAddress().getBuilding_number() : "");
-            city.setText(user.getAddress().getCity() != null ? user.getAddress().getCity() : "");
-            state.setText(user.getAddress().getState() != null ? user.getAddress().getState() : "");
-            postalcode.setText(user.getAddress().getPostcode() != null ? user.getAddress().getPostcode() : "");
+            if(user.getAddress() != null) {
+                name.setText(user.getAddress().getName() != null ? user.getAddress().getName() : "");
+                street.setText(user.getAddress().getStreet() != null ? user.getAddress().getStreet() : "");
+                building_number.setText(user.getAddress().getBuilding_number() != null ? user.getAddress().getBuilding_number() : "");
+                city.setText(user.getAddress().getCity() != null ? user.getAddress().getCity() : "");
+                state.setText(user.getAddress().getState() != null ? user.getAddress().getState() : "");
+                postalcode.setText(user.getAddress().getPostcode() != null ? user.getAddress().getPostcode() : "");
+            }
 
             if(editingUsername) {
                 editUsernameTextField.setVisible(false);
@@ -483,8 +485,8 @@ public class ProfileController implements Initializable {
                 else{
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
-                    alert.setHeaderText("Invalid email");
-                    alert.setContentText("Please enter a valid email");
+                    alert.setHeaderText("Error");
+                    alert.setContentText(getLang().getString("validemail"));
                     alert.showAndWait();
                     return;
                 }

@@ -179,7 +179,7 @@ public class RegisterController implements Initializable {
         form.getStyleClass().add("form");
 
         StackPane titlePane = new StackPane();
-        Text label = new Text("Create Account");
+        Text label = new Text(getLang().getString("crtacc"));
         label.getStyleClass().add("formTitle");
 
         Button goBack = new Button("X");
@@ -205,19 +205,19 @@ public class RegisterController implements Initializable {
 
         TextField name = new TextField();
         name.getStyleClass().add("formInput");
-        name.setPromptText("name");
+        name.setPromptText(getLang().getString("usrnm"));
         name.setPrefWidth(360);
         name.setMaxWidth(360);
 
         TextField email = new TextField();
         email.getStyleClass().add("formInput");
-        email.setPromptText("email");
+        email.setPromptText(getLang().getString("eml"));
         email.setPrefWidth(360);
         email.setMaxWidth(360);
 
         PasswordField password = new PasswordField();
         password.getStyleClass().add("formInput");
-        password.setPromptText("password");
+        password.setPromptText(getLang().getString("pass"));
         password.setPrefWidth(360);
         password.setMaxWidth(360);
 
@@ -230,7 +230,7 @@ public class RegisterController implements Initializable {
 
         TextField phone = new TextField();
         phone.getStyleClass().add("formInput");
-        phone.setPromptText("phone");
+        phone.setPromptText(getLang().getString("tel"));
         phone.setPrefWidth(290);
         phone.setMaxWidth(290);
 
@@ -238,8 +238,8 @@ public class RegisterController implements Initializable {
         inputs.setSpacing(10);
         inputs.getChildren().addAll(prefix, phone);
 
-        RadioButton user = new RadioButton("User");
-        RadioButton manager = new RadioButton("Restaurant Manager");
+        RadioButton user = new RadioButton(getLang().getString("usr"));
+        RadioButton manager = new RadioButton(getLang().getString("restmngr"));
 
         ToggleGroup radioGroup = new ToggleGroup();
         user.setToggleGroup(radioGroup);
@@ -247,7 +247,7 @@ public class RegisterController implements Initializable {
 
         user.setSelected(true);
 
-        Button registerButton = new Button("Create");
+        Button registerButton = new Button(getLang().getString("create"));
         registerButton.getStyleClass().add("formButton");
 
         registerButton.setOnMouseClicked(e -> {

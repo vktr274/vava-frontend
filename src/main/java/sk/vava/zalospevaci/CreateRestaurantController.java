@@ -136,7 +136,7 @@ public class CreateRestaurantController implements Initializable {
         form.getStyleClass().add("form");
 
         StackPane titlePane = new StackPane();
-        Text label = new Text("Register Restaurant");
+        Text label = new Text(getLang().getString("restRegistr"));
         label.getStyleClass().add("formTitle");
 
         Button goBack = new Button("X");
@@ -162,25 +162,25 @@ public class CreateRestaurantController implements Initializable {
 
         TextField name = new TextField();
         name.getStyleClass().add("formInput");
-        name.setPromptText("name");
+        name.setPromptText(getLang().getString("title"));
         name.setPrefWidth(360);
         name.setMaxWidth(360);
 
         TextField addrName = new TextField();
         addrName.getStyleClass().add("formInput");
-        addrName.setPromptText("Address name");
+        addrName.setPromptText(getLang().getString("addrname"));
         addrName.setPrefWidth(360);
         addrName.setMaxWidth(360);
 
         HBox inputs1 = new HBox();
         TextField street = new TextField();
         street.getStyleClass().add("formInput");
-        street.setPromptText("street");
+        street.setPromptText(getLang().getString("strt"));
         street.setPrefWidth(200);
 
         TextField building_number = new TextField();
         building_number.getStyleClass().add("formInput");
-        building_number.setPromptText("Build. no.");
+        building_number.setPromptText(getLang().getString("buildno"));
         building_number.setPrefWidth(150);
 
         inputs1.setAlignment(Pos.CENTER);
@@ -190,12 +190,12 @@ public class CreateRestaurantController implements Initializable {
         HBox inputs2 = new HBox();
         TextField city = new TextField();
         city.getStyleClass().add("formInput");
-        city.setPromptText("city");
+        city.setPromptText(getLang().getString("cty"));
         city.setPrefWidth(175);
 
         TextField country = new TextField();
         country.getStyleClass().add("formInput");
-        country.setPromptText("country");
+        country.setPromptText(getLang().getString("cntry"));
         country.setPrefWidth(175);
 
         inputs2.setAlignment(Pos.CENTER);
@@ -211,7 +211,7 @@ public class CreateRestaurantController implements Initializable {
 
         TextField phone = new TextField();
         phone.getStyleClass().add("formInput");
-        phone.setPromptText("phone");
+        phone.setPromptText(getLang().getString("tel"));
         phone.setPrefWidth(290);
         phone.setMaxWidth(290);
 
@@ -221,7 +221,7 @@ public class CreateRestaurantController implements Initializable {
 
         TextField postCode = new TextField();
         postCode.getStyleClass().add("formInput");
-        postCode.setPromptText("post code");
+        postCode.setPromptText(getLang().getString("zip"));
         postCode.setPrefWidth(120);
         postCode.setMaxWidth(120);
 
@@ -234,21 +234,21 @@ public class CreateRestaurantController implements Initializable {
             if (name.getText().isEmpty() || street.getText().isEmpty() || building_number.getText().isEmpty() || city.getText().isEmpty() || country.getText().isEmpty() || phone.getText().isEmpty() || prefix.getText().isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
-                alert.setHeaderText("Please fill in all fields");
+                alert.setHeaderText(getLang().getString("fillall"));
                 alert.showAndWait();
             }
             //check if phone number is valid
             else if (phone.getText().length() != 9) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
-                alert.setHeaderText("Phone number is not valid");
+                alert.setHeaderText(getLang().getString("validphone"));
                 alert.showAndWait();
             }
             //check if post code is valid
             else if (postCode.getText().length() != 5) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
-                alert.setHeaderText("Post code is not valid");
+                alert.setHeaderText(getLang().getString("validzip"));
                 alert.showAndWait();
             }
             else {
