@@ -188,20 +188,20 @@ public class HomeScreenController implements Initializable {
         menubar.getStyleClass().add("menubar");
         menubar.setVisible(false);
         menubar.setSpacing(20);
-        Button goBack = new Button("\uD83E\uDC14 Close");
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
         Pane spacer = new Pane();
         spacer.setPrefHeight(200);
-        Button home = new Button("Home");
-        Button restaurant = new Button("Restaurants");
-        Button settings = new Button("Language");
+        Button home = new Button(getLang().getString("home"));
+        Button restaurant = new Button(getLang().getString("restaurants"));
+        Button settings = new Button(getLang().getString("lng"));
         home.getStyleClass().add("whitebuttonmenu");
         restaurant.getStyleClass().add("whitebuttonmenu");
         settings.getStyleClass().add("whitebuttonmenu");
         if(JSONLoaded.getLang().equals("sk")){
-            settings.setText("Language - SK");
+            settings.setText(getLang().getString("lng")+" - SK");
         }
         if(JSONLoaded.getLang().equals("en")){
-            settings.setText("Language - EN");
+            settings.setText(getLang().getString("lng")+" - EN");
         }
         settings.setOnMouseClicked(event -> {
             if(JSONLoaded.getLang().equals("sk")){
@@ -259,6 +259,7 @@ public class HomeScreenController implements Initializable {
     }
 
     public void guestBarF() {
+        userBar.getChildren().clear();
         userBar.getStyleClass().add("menubar");
         userBar.setVisible(false);
         userBar.setSpacing(20);
@@ -322,6 +323,7 @@ public class HomeScreenController implements Initializable {
     }
 
     public void userBarManagerF() {
+        userBar.getChildren().clear();
         userBar.getStyleClass().add("menubar");
         userBar.setVisible(false);
         userBar.setSpacing(20);
@@ -393,6 +395,7 @@ public class HomeScreenController implements Initializable {
     }
 
     public void userBarAdminF() {
+        userBar.getChildren().clear();
         userBar.getStyleClass().add("menubar");
         userBar.setVisible(false);
         userBar.setSpacing(20);
@@ -467,6 +470,7 @@ public class HomeScreenController implements Initializable {
     }
 
     public void userBarUserF() {
+        userBar.getChildren().clear();
         userBar.getStyleClass().add("menubar");
         userBar.setVisible(false);
         userBar.setSpacing(20);
