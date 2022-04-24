@@ -218,6 +218,21 @@ public class RestaurantListController implements Initializable {
             addReview.setText(getLang().getString("addrev"));
             addReview.getStyleClass().add("whitebutton");
 
+            addReview.setOnMouseClicked(event -> {
+                JSONLoaded.setRestaurant(object);
+                Stage stage = (Stage) addReview.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("reviewAdd.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+            });
+
             Button block = new Button();
             if(object.getBoolean("blocked")) block.setText(getLang().getString("unblock"));
             else block.setText(getLang().getString("block"));
