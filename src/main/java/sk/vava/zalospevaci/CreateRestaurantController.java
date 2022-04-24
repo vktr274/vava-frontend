@@ -33,6 +33,8 @@ public class CreateRestaurantController implements Initializable {
     @FXML
     private VBox mainVBox;
 
+    private Button registerButton = new Button("Register");
+
     private final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .build();
@@ -58,6 +60,19 @@ public class CreateRestaurantController implements Initializable {
         try {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.statusCode());
+            if (response.statusCode() == 201) {
+                Stage stage = (Stage) registerButton.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+            }
             return response.body();
         } catch (InterruptedException | IOException e) {
             return "ERROR";
@@ -169,7 +184,6 @@ public class CreateRestaurantController implements Initializable {
         postCode.setPrefWidth(120);
         postCode.setMaxWidth(120);
 
-        Button registerButton = new Button("Register");
         registerButton.getStyleClass().add("formButton");
 
         HBox spacer = new HBox();

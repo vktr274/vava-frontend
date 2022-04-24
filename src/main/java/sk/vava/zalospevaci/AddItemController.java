@@ -38,6 +38,8 @@ public class AddItemController implements Initializable {
             .version(HttpClient.Version.HTTP_2)
             .build();
 
+    private Button createButton = new Button("Create");
+
     public String handleCreate(String url, String name, String description, int price) {
         JSONObject requestB = new JSONObject();
 
@@ -62,6 +64,19 @@ public class AddItemController implements Initializable {
         try {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.statusCode());
+            if(response.statusCode() == 201) {
+                Stage stage = (Stage) createButton.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantMenu.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+            }
             return response.body();
         } catch (InterruptedException | IOException e) {
             return "ERROR";
@@ -128,8 +143,6 @@ public class AddItemController implements Initializable {
         price.setPrefWidth(150);
         price.setMaxWidth(150);
 
-
-        Button createButton = new Button("Create");
         createButton.getStyleClass().add("formButton");
 
         HBox spacer = new HBox();
