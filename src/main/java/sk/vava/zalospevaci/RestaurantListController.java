@@ -161,7 +161,7 @@ public class RestaurantListController implements Initializable {
             full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
         }
         else{
-            full = new JSONObject(getJSONM("http://localhost:8080/restaurants/manage"));
+            full = new JSONObject(getJSONM("http://localhost:8080/restaurants/manage?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()));
         }
         JSONObject metadata = full.getJSONObject("metadata");
         JSONArray array = full.getJSONArray("restaurants");
@@ -176,7 +176,7 @@ public class RestaurantListController implements Initializable {
                 full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
             }
             else{
-                full = new JSONObject(getJSONM("http://localhost:8080/restaurants/manage"));
+                full = new JSONObject(getJSONM("http://localhost:8080/restaurants/manage?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()));
             }
             array = full.getJSONArray("restaurants");
         }
@@ -350,6 +350,17 @@ public class RestaurantListController implements Initializable {
             reset.setVisible(false);
         }
 
+        if(JSONLoaded.getIsManaging()){
+            city.setVisible(false);
+            restname.setVisible(false);
+            apply.setVisible(false);
+        }
+        else{
+            city.setVisible(true);
+            restname.setVisible(true);
+            apply.setVisible(true);
+        }
+
         Text ppg = new Text(getLang().getString("show") + getPerpage() + getLang().getString("items"));
         ppg.getStyleClass().add("itemnametext");
         Button morepg = new Button("+");
@@ -408,7 +419,7 @@ public class RestaurantListController implements Initializable {
 
         if(getPerpage()>=getElements()){
             morepg.setVisible(false);
-            restFilt.getChildren().addAll(spacer1,asc,restname,city,apply,reset,blockbtn,spacer3,ppg,perpgbtn,spacer2);
+            restFilt.getChildren().addAll(spacer1,asc,restname,city,apply,reset,spacer3,blockbtn,ppg,perpgbtn,spacer2);
         }
         else{
             restFilt.getChildren().addAll(spacer1,asc,restname,city,apply,reset,spacer3,blockbtn,ppg,perpgbtn,pg,pgbtn,spacer2);
