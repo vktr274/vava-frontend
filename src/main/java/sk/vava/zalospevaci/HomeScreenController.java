@@ -6,6 +6,7 @@ import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -44,8 +45,18 @@ public class HomeScreenController implements Initializable {
     @FXML
     private VBox userBar;
 
+    private static ResourceBundle lang;
+    private void setLang(ResourceBundle lang){
+        HomeScreenController.lang = lang;
+    }
+    private ResourceBundle getLang(){
+        return HomeScreenController.lang;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
+        setLang(lngBndl);
         homeScreen();
     }
 
@@ -68,6 +79,8 @@ public class HomeScreenController implements Initializable {
     }
 
     public void homeScreen(){
+        infoVBox.getChildren().clear();
+        restaurantsHBox.getChildren().clear();
         JSONObject full = new JSONObject(getJSON("http://localhost:8080/restaurants"));
         JSONArray restaurantsArray = full.getJSONArray("restaurants");
         JSONObject user = JSONLoaded.getUser();
@@ -171,6 +184,7 @@ public class HomeScreenController implements Initializable {
     }
 
     public void menuBarF(){
+        menubar.getChildren().clear();
         menubar.getStyleClass().add("menubar");
         menubar.setVisible(false);
         menubar.setSpacing(20);
@@ -179,10 +193,34 @@ public class HomeScreenController implements Initializable {
         spacer.setPrefHeight(200);
         Button home = new Button("Home");
         Button restaurant = new Button("Restaurants");
-        Button settings = new Button("Settings");
+        Button settings = new Button("Language");
         home.getStyleClass().add("whitebuttonmenu");
         restaurant.getStyleClass().add("whitebuttonmenu");
         settings.getStyleClass().add("whitebuttonmenu");
+        if(JSONLoaded.getLang().equals("sk")){
+            settings.setText("Language - SK");
+        }
+        if(JSONLoaded.getLang().equals("en")){
+            settings.setText("Language - EN");
+        }
+        settings.setOnMouseClicked(event -> {
+            if(JSONLoaded.getLang().equals("sk")){
+                JSONLoaded.setCountry("EN");
+                JSONLoaded.setLang("en");
+                ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
+                setLang(lngBndl);
+                homeScreen();
+                menubar.setVisible(true);
+            }
+            else if(JSONLoaded.getLang().equals("en")){
+                JSONLoaded.setCountry("SK");
+                JSONLoaded.setLang("sk");
+                ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
+                setLang(lngBndl);
+                homeScreen();
+                menubar.setVisible(true);
+            }
+        });
         goBack.getStyleClass().add("backbutton");
         menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
         menubtn.setOnMouseClicked(e -> {
