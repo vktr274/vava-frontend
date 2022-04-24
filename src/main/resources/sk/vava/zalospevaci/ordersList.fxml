@@ -39,4 +39,5 @@
        </children>
     </VBox>
     <VBox fx:id="menubar" alignment="TOP_CENTER" maxWidth="300.0" prefHeight="720.0" prefWidth="300.0" />
+    <VBox fx:id="userBar" alignment="TOP_CENTER" maxWidth="300.0" prefHeight="720.0" prefWidth="300.0" StackPane.alignment="TOP_RIGHT" />
 </StackPane>
