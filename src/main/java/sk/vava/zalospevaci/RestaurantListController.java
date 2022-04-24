@@ -129,6 +129,25 @@ public class RestaurantListController implements Initializable {
 
     }
 
+    public String getJSONM(String url){
+        HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder().uri(new URI(url)).GET().setHeader("auth", JSONLoaded.getUser().getString("token")).build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        HttpResponse<String> response;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        }  catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
+
+    }
+
     public void restaurantSetScreen(){
         if(JSONLoaded.getActiveUser() != null){
             if(!Objects.equals(JSONLoaded.getActiveUser().role, "admin")) setBlocked("false");
@@ -137,7 +156,13 @@ public class RestaurantListController implements Initializable {
         tree.setSpacing(25);
         tree.getChildren().clear();
         restFilt.getChildren().clear();
-        JSONObject full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
+        JSONObject full;
+        if(!JSONLoaded.getIsManaging()){
+            full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
+        }
+        else{
+            full = new JSONObject(getJSONM("http://localhost:8080/restaurants/manage"));
+        }
         JSONObject metadata = full.getJSONObject("metadata");
         JSONArray array = full.getJSONArray("restaurants");
         setElements(metadata.getInt("total_elements"));
@@ -147,7 +172,12 @@ public class RestaurantListController implements Initializable {
         tree.getChildren().add(restaurantLabel);
         if(array.length()==0 && getElements()>0){
             setPage(getPage()-1);
-            full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
+            if(!JSONLoaded.getIsManaging()){
+                full = new JSONObject(getJSON("http://localhost:8080/restaurants?&per_page="+getPerpage()+"&page="+getPage()+"&sort="+getAscending()+"&name="+getName()+"&city="+getCity()+"&blocked="+getBlocked()));
+            }
+            else{
+                full = new JSONObject(getJSONM("http://localhost:8080/restaurants/manage"));
+            }
             array = full.getJSONArray("restaurants");
         }
         menuBarF();
@@ -240,14 +270,36 @@ public class RestaurantListController implements Initializable {
         if(getBlocked().equals("false")) blockbtn.setText(getLang().getString("blh"));
         if(getBlocked().equals("true")) blockbtn.setText(getLang().getString("bls"));
         if(getBlocked().equals("")) blockbtn.setText(getLang().getString("als"));
-        blockbtn.setOnMouseClicked(event -> {
-            if(getBlocked().equals("false")) setBlocked("true");
-            else if(getBlocked().equals("true")) setBlocked("");
-            else if(getBlocked().equals("")) setBlocked("false");
-            restaurantSetScreen();
-        });
+        if(JSONLoaded.getActiveUser() != null){
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")){
+                blockbtn.setOnMouseClicked(event -> {
+                    if(getBlocked().equals("false")) setBlocked("true");
+                    else if(getBlocked().equals("true")) setBlocked("");
+                    else if(getBlocked().equals("")) setBlocked("false");
+                    restaurantSetScreen();
+                });
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")){
+                blockbtn.setOnMouseClicked(event -> {
+                    if(JSONLoaded.getIsManaging()==false)JSONLoaded.setIsManaging(true);
+                    else if (JSONLoaded.getIsManaging()==true)JSONLoaded.setIsManaging(false);
+                    restaurantSetScreen();
+                });
+            }
+        }
+
         if(JSONLoaded.getActiveUser() != null){
             if(!Objects.equals(JSONLoaded.getActiveUser().role, "admin")) blockbtn.setVisible(false);
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")){
+                blockbtn.setVisible(true);
+                if(JSONLoaded.getIsManaging()==true){
+                    blockbtn.setText(getLang().getString("mngrbtn"));
+                }
+                if(JSONLoaded.getIsManaging()==false){
+                    blockbtn.setText(getLang().getString("als"));
+                }
+
+            }
         }
         else blockbtn.setVisible(false);
 

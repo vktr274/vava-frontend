@@ -9,6 +9,14 @@ public class JSONLoaded {
     private static int[][] order;
     private static String lang;
     private static String country;
+    private static boolean isManaging;
+
+    public static void setIsManaging(boolean managing){
+        JSONLoaded.isManaging = managing;
+    }
+    public static boolean getIsManaging(){
+        return JSONLoaded.isManaging;
+    }
 
     public static void setLang(String lang){
         JSONLoaded.lang = lang;
