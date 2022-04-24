@@ -101,6 +101,22 @@ public class ReviewAddController implements Initializable {
         reviewbox.setSpacing(25);
         reviewbox.getChildren().clear();
         restInfo.getChildren().clear();
+
+        if(JSONLoaded.getActiveUser() != null){
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
+                userBarManagerF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "guest")) {
+                userBarUserF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")) {
+                userBarAdminF();
+            }
+        }
+        else{
+            guestBarF();
+        }
+
         menuBarF();
         JSONObject restaurantJson = JSONLoaded.getRestaurant();
         System.out.println(restaurantJson.getInt("id"));

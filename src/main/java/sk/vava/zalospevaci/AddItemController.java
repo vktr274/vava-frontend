@@ -109,6 +109,22 @@ public class AddItemController implements Initializable {
     private void createRestaurants() {
         VBox container = new VBox();
         VBox form = new VBox();
+        if(JSONLoaded.getActiveUser() != null){
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
+                userBarManagerF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "guest")) {
+                userBarUserF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")) {
+                userBarAdminF();
+            }
+        }
+        else{
+            guestBarF();
+        }
+
+        menuBarF();
 
         container.getChildren().add(form);
         mainVBox.getChildren().add(container);

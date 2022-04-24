@@ -53,6 +53,22 @@ public class OrderDoneController implements Initializable {
         menuBarF();
         orderD.setSpacing(30);
         orderD.setAlignment(Pos.CENTER);
+
+        if(JSONLoaded.getActiveUser() != null){
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
+                userBarManagerF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "guest")) {
+                userBarUserF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")) {
+                userBarAdminF();
+            }
+        }
+        else{
+            guestBarF();
+        }
+
         Text orderFinText = new Text(getLang().getString("finthanks"));
         orderFinText.getStyleClass().add("ordertoptext");
         Text orderFinText2 = new Text(getLang().getString("fincour"));

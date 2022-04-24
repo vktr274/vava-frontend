@@ -115,6 +115,23 @@ public class ReviewListController implements Initializable {
         reviews.setSpacing(25);
         reviews.getChildren().clear();
         restInfo.getChildren().clear();
+
+        if(JSONLoaded.getActiveUser() != null){
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
+                userBarManagerF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "guest")) {
+                userBarUserF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")) {
+                userBarAdminF();
+            }
+        }
+        else{
+            guestBarF();
+        }
+
+
         menuBarF();
         JSONObject restaurantJson = JSONLoaded.getRestaurant();
         System.out.println(restaurantJson.getInt("id"));

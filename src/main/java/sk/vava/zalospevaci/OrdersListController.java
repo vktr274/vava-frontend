@@ -122,6 +122,22 @@ public class OrdersListController implements Initializable {
         tree.setSpacing(25);
         tree.getChildren().clear();
         restFilt.getChildren().clear();
+
+        if(JSONLoaded.getActiveUser() != null){
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
+                userBarManagerF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "guest")) {
+                userBarUserF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")) {
+                userBarAdminF();
+            }
+        }
+        else{
+            guestBarF();
+        }
+
         JSONObject full = new JSONObject(getJSON("http://localhost:8080/orders?&per_page="+getPerpage()+"&page="+getPage()));
         JSONObject metadata = full.getJSONObject("metadata");
         JSONArray array = full.getJSONArray("orders");

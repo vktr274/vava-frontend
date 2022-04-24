@@ -160,6 +160,22 @@ public class RestaurantListController implements Initializable {
             if(!Objects.equals(JSONLoaded.getActiveUser().role, "admin")) setBlocked("false");
         }
         else setBlocked("false");
+
+        if(JSONLoaded.getActiveUser() != null){
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
+                userBarManagerF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "guest")) {
+                userBarUserF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")) {
+                userBarAdminF();
+            }
+        }
+        else{
+            guestBarF();
+        }
+
         tree.setSpacing(25);
         tree.getChildren().clear();
         restFilt.getChildren().clear();

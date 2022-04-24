@@ -182,6 +182,23 @@ public class ProfileController implements Initializable {
     public void profileScreen() {
         mainVBox.setSpacing(20);
 
+        if(JSONLoaded.getActiveUser() != null){
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
+                userBarManagerF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "guest")) {
+                userBarUserF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")) {
+                userBarAdminF();
+            }
+        }
+        else{
+            guestBarF();
+        }
+
+        menuBarF();
+
         User user = JSONLoaded.getActiveUser();
 
         VBox profileVBox = new VBox();
