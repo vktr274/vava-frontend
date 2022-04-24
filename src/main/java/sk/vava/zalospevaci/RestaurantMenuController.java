@@ -147,7 +147,7 @@ public class RestaurantMenuController implements Initializable {
             itemMenu.getStyleClass().add("menuitem");
             Text itemPrice = new Text(addToCart.getText());
             itemPrice.getStyleClass().add("itemname");
-            if(JSONLoaded.getActiveUser()!=null && Objects.equals(JSONLoaded.getActiveUser().role, "admin") || JSONLoaded.getIsManaging()){
+            if(JSONLoaded.getActiveUser()!=null && JSONLoaded.getIsManaging()){
                 itemMenu.getChildren().addAll(spacer1,texts,spacer2,itemPrice,spacer3);
             }
             else{
@@ -217,7 +217,7 @@ public class RestaurantMenuController implements Initializable {
             checkout.setText(getLang().getString("mngradd"));
         }
         checkout.setOnMouseClicked(e -> {
-            if(JSONLoaded.getActiveUser()!=null && Objects.equals(JSONLoaded.getActiveUser().role, "admin") || JSONLoaded.getIsManaging()){
+            if(JSONLoaded.getActiveUser()!=null && JSONLoaded.getIsManaging()){
                 Stage stage = (Stage) checkout.getScene().getWindow();
                 Parent root = null;
                 try {
@@ -267,7 +267,7 @@ public class RestaurantMenuController implements Initializable {
 
         restInfo.setSpacing(20);
         restInfo.setAlignment(Pos.TOP_CENTER);
-        if(JSONLoaded.getActiveUser()!=null && Objects.equals(JSONLoaded.getActiveUser().role, "admin") || JSONLoaded.getIsManaging()){
+        if(JSONLoaded.getActiveUser()!=null && JSONLoaded.getIsManaging()){
             restInfo.getChildren().addAll(spacer1,rN,addr,ph,spacer3,goback,reviews,checkout,spacer2);
         }
         else{
