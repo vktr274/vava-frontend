@@ -6,22 +6,39 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class OrderDoneController implements Initializable {
+public class CreateRestaurantController implements Initializable {
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
+        setLang(lngBndl);
+        createRestaurants();
+    }
+
+    @FXML
+    private VBox mainVBox;
 
     @FXML
     private Button menubtn;
@@ -31,28 +48,64 @@ public class OrderDoneController implements Initializable {
     private VBox menubar;
     @FXML
     private VBox userBar;
-    @FXML
-    private VBox orderD;
 
     private static ResourceBundle lang;
     private void setLang(ResourceBundle lang){
-        OrderDoneController.lang = lang;
+        CreateRestaurantController.lang = lang;
     }
     private ResourceBundle getLang(){
-        return OrderDoneController.lang;
+        return CreateRestaurantController.lang;
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
-        setLang(lngBndl);
-        SetScreen();
+    private Button registerButton = new Button("Register");
+
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .build();
+
+    public String handleCreate(String url, Restaurant restaurant){
+        JSONObject requestB = new JSONObject(restaurant);
+        System.out.println(requestB);
+
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(requestB.toString()))
+                    .uri(new URI(url))
+                    .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
+                    .header("Content-Type", "application/json")
+                    .build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
+
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+            if (response.statusCode() == 201) {
+                Stage stage = (Stage) registerButton.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+            }
+            return response.body();
+        } catch (InterruptedException | IOException e) {
+            return "ERROR";
+        }
     }
 
-    public void SetScreen(){
-        menuBarF();
-        orderD.setSpacing(30);
-        orderD.setAlignment(Pos.CENTER);
+    private void createRestaurants() {
+        VBox container = new VBox();
+        VBox form = new VBox();
 
         if(JSONLoaded.getActiveUser() != null){
             if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
@@ -69,18 +122,29 @@ public class OrderDoneController implements Initializable {
             guestBarF();
         }
 
-        Text orderFinText = new Text(getLang().getString("finthanks"));
-        orderFinText.getStyleClass().add("ordertoptext");
-        Text orderFinText2 = new Text(getLang().getString("fincour"));
-        orderFinText2.getStyleClass().add("orderbottomtext");
-        Button backToRest = new Button(getLang().getString("finback"));
-        backToRest.getStyleClass().add("blackbuttonwide");
-        Button logout = new Button(getLang().getString("finlo"));
-        logout.getStyleClass().add("whitebuttonwide");
-        logout.setOnMouseClicked(event -> {
-            JSONLoaded.setUser(null);
-            JSONLoaded.setActiveUser(null);
-            Stage stage = (Stage) logout.getScene().getWindow();
+        menuBarF();
+
+        container.getChildren().add(form);
+        mainVBox.getChildren().add(container);
+
+        container.setAlignment(Pos.CENTER);
+        container.prefHeightProperty().setValue(680);
+
+        form.setMaxWidth(400);
+        form.setSpacing(15);
+        form.setAlignment(Pos.CENTER);
+        form.getStyleClass().add("form");
+
+        StackPane titlePane = new StackPane();
+        Text label = new Text(getLang().getString("restRegistr"));
+        label.getStyleClass().add("formTitle");
+
+        Button goBack = new Button("X");
+
+        goBack.setTranslateX(180);
+
+        goBack.setOnMouseClicked(e -> {
+            Stage stage = (Stage) goBack.getScene().getWindow();
             Parent root = null;
             try {
                 root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
@@ -92,20 +156,111 @@ public class OrderDoneController implements Initializable {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
             stage.setScene(scene);
         });
-        backToRest.setOnMouseClicked(event -> {
-            Stage stage = (Stage) backToRest.getScene().getWindow();
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
-            } catch (IOException ex) {
-                ex.printStackTrace();
+
+        titlePane.getChildren().addAll(label, goBack);
+        titlePane.getStyleClass().add("formTitlePane");
+
+        TextField name = new TextField();
+        name.getStyleClass().add("formInput");
+        name.setPromptText(getLang().getString("title"));
+        name.setPrefWidth(360);
+        name.setMaxWidth(360);
+
+        TextField addrName = new TextField();
+        addrName.getStyleClass().add("formInput");
+        addrName.setPromptText(getLang().getString("addrname"));
+        addrName.setPrefWidth(360);
+        addrName.setMaxWidth(360);
+
+        HBox inputs1 = new HBox();
+        TextField street = new TextField();
+        street.getStyleClass().add("formInput");
+        street.setPromptText(getLang().getString("strt"));
+        street.setPrefWidth(200);
+
+        TextField building_number = new TextField();
+        building_number.getStyleClass().add("formInput");
+        building_number.setPromptText(getLang().getString("buildno"));
+        building_number.setPrefWidth(150);
+
+        inputs1.setAlignment(Pos.CENTER);
+        inputs1.setSpacing(10);
+        inputs1.getChildren().addAll(street, building_number);
+
+        HBox inputs2 = new HBox();
+        TextField city = new TextField();
+        city.getStyleClass().add("formInput");
+        city.setPromptText(getLang().getString("cty"));
+        city.setPrefWidth(175);
+
+        TextField country = new TextField();
+        country.getStyleClass().add("formInput");
+        country.setPromptText(getLang().getString("cntry"));
+        country.setPrefWidth(175);
+
+        inputs2.setAlignment(Pos.CENTER);
+        inputs2.setSpacing(10);
+        inputs2.getChildren().addAll(city, country);
+
+        HBox phoneInputs = new HBox();
+        TextField prefix = new TextField();
+        prefix.getStyleClass().add("formInput");
+        prefix.setPromptText("+421");
+        prefix.setPrefWidth(60);
+        prefix.setMaxWidth(60);
+
+        TextField phone = new TextField();
+        phone.getStyleClass().add("formInput");
+        phone.setPromptText(getLang().getString("tel"));
+        phone.setPrefWidth(290);
+        phone.setMaxWidth(290);
+
+        phoneInputs.setAlignment(Pos.CENTER);
+        phoneInputs.setSpacing(10);
+        phoneInputs.getChildren().addAll(prefix, phone);
+
+        TextField postCode = new TextField();
+        postCode.getStyleClass().add("formInput");
+        postCode.setPromptText(getLang().getString("zip"));
+        postCode.setPrefWidth(120);
+        postCode.setMaxWidth(120);
+
+        registerButton.getStyleClass().add("formButton");
+
+        HBox spacer = new HBox();
+        spacer.setSpacing(20);
+
+        registerButton.setOnMouseClicked(e -> {
+            if (name.getText().isEmpty() || street.getText().isEmpty() || building_number.getText().isEmpty() || city.getText().isEmpty() || country.getText().isEmpty() || phone.getText().isEmpty() || prefix.getText().isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(getLang().getString("fillall"));
+                alert.showAndWait();
             }
-            assert root != null;
-            Scene scene = new Scene(root, 1280, 720);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
-            stage.setScene(scene);
+            //check if phone number is valid
+            else if (phone.getText().length() != 9) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(getLang().getString("validphone"));
+                alert.showAndWait();
+            }
+            //check if post code is valid
+            else if (postCode.getText().length() != 5) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(getLang().getString("validzip"));
+                alert.showAndWait();
+            }
+            else {
+                Phone restaurantPhone = new Phone(phone.getText(), prefix.getText());
+                Address restaurantAddress = new Address(addrName.getText(), street.getText(), city.getText(), country.getText(), postCode.getText(), building_number.getText());
+                Restaurant restaurant = new Restaurant(name.getText(), restaurantAddress, restaurantPhone);
+
+                handleCreate("http://localhost:8080/restaurants", restaurant);
+            }
         });
-        orderD.getChildren().addAll(orderFinText,orderFinText2,backToRest,logout);
+
+        form.getChildren().addAll(titlePane, name, addrName, inputs1, inputs2, postCode, phoneInputs,registerButton, spacer);
     }
 
     public void menuBarF(){
@@ -134,7 +289,7 @@ public class OrderDoneController implements Initializable {
                 JSONLoaded.setLang("en");
                 ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
                 setLang(lngBndl);
-                SetScreen();
+                createRestaurants();
                 menubar.setVisible(true);
             }
             else if(JSONLoaded.getLang().equals("en")){
@@ -142,7 +297,7 @@ public class OrderDoneController implements Initializable {
                 JSONLoaded.setLang("sk");
                 ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
                 setLang(lngBndl);
-                SetScreen();
+                createRestaurants();
                 menubar.setVisible(true);
             }
         });

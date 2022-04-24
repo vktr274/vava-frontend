@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
+        JSONLoaded.setLang("sk");
+        JSONLoaded.setCountry("SK");
         Parent root = FXMLLoader.load(getClass().getResource("homeScreen.fxml"));
         Scene scene = new Scene(root, 1280, 720);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());

@@ -397,7 +397,7 @@
     -fx-font-family: 'Roboto Slab';
     -fx-font-size: 12px;
     -fx-min-height: 25px;
-    -fx-min-width: 80px;
+    -fx-min-width: 30px;
     -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.7) , 15,0,0,1 );
     -fx-alignment: center;
 }

@@ -3,25 +3,42 @@ package sk.vava.zalospevaci;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class OrderDoneController implements Initializable {
+public class AddItemController implements Initializable {
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
+        setLang(lngBndl);
+        createRestaurants();
+    }
+
+    @FXML
+    private VBox mainVBox;
 
     @FXML
     private Button menubtn;
@@ -31,29 +48,67 @@ public class OrderDoneController implements Initializable {
     private VBox menubar;
     @FXML
     private VBox userBar;
-    @FXML
-    private VBox orderD;
 
     private static ResourceBundle lang;
     private void setLang(ResourceBundle lang){
-        OrderDoneController.lang = lang;
+        AddItemController.lang = lang;
     }
     private ResourceBundle getLang(){
-        return OrderDoneController.lang;
+        return AddItemController.lang;
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
-        setLang(lngBndl);
-        SetScreen();
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .build();
+
+    private Button createButton = new Button();
+
+    public String handleCreate(String url, String name, String description, int price) {
+        JSONObject requestB = new JSONObject();
+
+        requestB.put("name", name);
+        requestB.put("description", description);
+        requestB.put("price", price);
+
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(requestB.toString()))
+                    .uri(new URI(url))
+                    .setHeader("auth", JSONLoaded.getUser().getString("token")) // add request header
+                    .header("Content-Type", "application/json")
+                    .build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
+
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+            if(response.statusCode() == 201) {
+                Stage stage = (Stage) createButton.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantMenu.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
+            }
+            return response.body();
+        } catch (InterruptedException | IOException e) {
+            return "ERROR";
+        }
     }
 
-    public void SetScreen(){
-        menuBarF();
-        orderD.setSpacing(30);
-        orderD.setAlignment(Pos.CENTER);
-
+    private void createRestaurants() {
+        VBox container = new VBox();
+        VBox form = new VBox();
         if(JSONLoaded.getActiveUser() != null){
             if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
                 userBarManagerF();
@@ -69,21 +124,34 @@ public class OrderDoneController implements Initializable {
             guestBarF();
         }
 
-        Text orderFinText = new Text(getLang().getString("finthanks"));
-        orderFinText.getStyleClass().add("ordertoptext");
-        Text orderFinText2 = new Text(getLang().getString("fincour"));
-        orderFinText2.getStyleClass().add("orderbottomtext");
-        Button backToRest = new Button(getLang().getString("finback"));
-        backToRest.getStyleClass().add("blackbuttonwide");
-        Button logout = new Button(getLang().getString("finlo"));
-        logout.getStyleClass().add("whitebuttonwide");
-        logout.setOnMouseClicked(event -> {
-            JSONLoaded.setUser(null);
-            JSONLoaded.setActiveUser(null);
-            Stage stage = (Stage) logout.getScene().getWindow();
+        createButton.setText(getLang().getString("create"));
+
+        menuBarF();
+
+        container.getChildren().add(form);
+        mainVBox.getChildren().add(container);
+
+        container.setAlignment(Pos.CENTER);
+        container.prefHeightProperty().setValue(680);
+
+        form.setMaxWidth(400);
+        form.setSpacing(15);
+        form.setAlignment(Pos.CENTER);
+        form.getStyleClass().add("form");
+
+        StackPane titlePane = new StackPane();
+        Text label = new Text(getLang().getString("additem"));
+        label.getStyleClass().add("formTitle");
+
+        Button goBack = new Button("X");
+
+        goBack.setTranslateX(180);
+
+        goBack.setOnMouseClicked(e -> {
+            Stage stage = (Stage) goBack.getScene().getWindow();
             Parent root = null;
             try {
-                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantMenu.fxml")));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -92,20 +160,53 @@ public class OrderDoneController implements Initializable {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
             stage.setScene(scene);
         });
-        backToRest.setOnMouseClicked(event -> {
-            Stage stage = (Stage) backToRest.getScene().getWindow();
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
-            } catch (IOException ex) {
-                ex.printStackTrace();
+
+        titlePane.getChildren().addAll(label, goBack);
+        titlePane.getStyleClass().add("formTitlePane");
+
+        TextField name = new TextField();
+        name.getStyleClass().add("formInput");
+        name.setPromptText(getLang().getString("title"));
+        name.setPrefWidth(360);
+        name.setMaxWidth(360);
+
+        TextArea description = new TextArea();
+        description.getStyleClass().add("formInput");
+        description.setPromptText(getLang().getString("desc"));
+        description.setPrefWidth(360);
+        description.setMaxWidth(360);
+
+        description.setWrapText(true);
+
+        TextField price = new TextField();
+        price.getStyleClass().add("formInput");
+        price.setPromptText(getLang().getString("prce"));
+        price.setPrefWidth(150);
+        price.setMaxWidth(150);
+
+        createButton.getStyleClass().add("formButton");
+
+        HBox spacer = new HBox();
+        spacer.setSpacing(20);
+
+        createButton.setOnMouseClicked(e -> {
+            String nameText = name.getText();
+            String descriptionText = description.getText();
+            int priceText = Integer.parseInt(price.getText())*100;
+
+            if (nameText.isEmpty() || descriptionText.isEmpty() || price.getText().isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Error");
+                alert.setContentText(getLang().getString("fillall"));
+                alert.showAndWait();
             }
-            assert root != null;
-            Scene scene = new Scene(root, 1280, 720);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
-            stage.setScene(scene);
+
+            System.out.println(descriptionText);
+            handleCreate("http://localhost:8080/items?restaurantId="+JSONLoaded.getRestaurant().getInt("id"), nameText, descriptionText, priceText);
         });
-        orderD.getChildren().addAll(orderFinText,orderFinText2,backToRest,logout);
+
+        form.getChildren().addAll(titlePane, name,description, price, createButton, spacer);
     }
 
     public void menuBarF(){
@@ -134,7 +235,7 @@ public class OrderDoneController implements Initializable {
                 JSONLoaded.setLang("en");
                 ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
                 setLang(lngBndl);
-                SetScreen();
+                createRestaurants();
                 menubar.setVisible(true);
             }
             else if(JSONLoaded.getLang().equals("en")){
@@ -142,7 +243,7 @@ public class OrderDoneController implements Initializable {
                 JSONLoaded.setLang("sk");
                 ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
                 setLang(lngBndl);
-                SetScreen();
+                createRestaurants();
                 menubar.setVisible(true);
             }
         });

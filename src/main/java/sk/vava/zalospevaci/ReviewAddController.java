@@ -17,12 +17,11 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONObject;
@@ -35,11 +34,13 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 public class ReviewAddController implements Initializable {
 
@@ -51,22 +52,47 @@ public class ReviewAddController implements Initializable {
     @FXML
     private Button menubtn;
     @FXML
+    private Button userbtn;
+    @FXML
     private VBox menubar;
+    @FXML
+    private VBox userBar;
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .build();
 
-    private static File imgfile;
-    private void setImgfile(File file){
-        ReviewAddController.imgfile = file;
+    private static int index = 0;
+    private void resetIndex(){
+        ReviewAddController.index=0;
     }
-    private File getImgfile(){
+    private void iterIndex(){
+        ReviewAddController.index+=1;
+        if(ReviewAddController.index==3) ReviewAddController.index=0;
+    }
+    private int getIndex(){
+        return ReviewAddController.index;
+    }
+    private static File[] imgfile;
+    private static void setImgfile(File[] imgfile) {
+        ReviewAddController.imgfile = imgfile;
+    }
+    private File[] getImgfile(){
         return ReviewAddController.imgfile;
+    }
+
+    private static ResourceBundle lang;
+    private void setLang(ResourceBundle lang){
+        ReviewAddController.lang = lang;
+    }
+    private ResourceBundle getLang(){
+        return ReviewAddController.lang;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
+        setLang(lngBndl);
         SetScreen();
     }
 
@@ -75,16 +101,32 @@ public class ReviewAddController implements Initializable {
         reviewbox.setSpacing(25);
         reviewbox.getChildren().clear();
         restInfo.getChildren().clear();
+
+        if(JSONLoaded.getActiveUser() != null){
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
+                userBarManagerF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "guest")) {
+                userBarUserF();
+            }
+            if(Objects.equals(JSONLoaded.getActiveUser().role, "admin")) {
+                userBarAdminF();
+            }
+        }
+        else{
+            guestBarF();
+        }
+
         menuBarF();
         JSONObject restaurantJson = JSONLoaded.getRestaurant();
         System.out.println(restaurantJson.getInt("id"));
         Text restaurantLabel = new Text(restaurantJson.getString("name"));
         restaurantLabel.getStyleClass().add("label");
-        Text revLabel = new Text("Review text");
+        Text revLabel = new Text(getLang().getString("revtext"));
         revLabel.getStyleClass().add("label");
         TextArea revText = new TextArea();
         revText.setWrapText(true);
-        revText.setPromptText("Write your review here...");
+        revText.setPromptText(getLang().getString("revhere"));
         revText.getStyleClass().add("textareareview");
         Slider stars = new Slider(1, 10, 1);
         stars.setOrientation(Orientation.HORIZONTAL);
@@ -101,19 +143,28 @@ public class ReviewAddController implements Initializable {
         spacer2.setPrefHeight(0);
         Pane spacer3 = new Pane();
         VBox.setVgrow(spacer3, Priority.ALWAYS);
-        Image restaurantImage = new Image("https://i.imgur.com/Tf3j0rU.jpg");
         ImageView rImageView = new ImageView();
-        rImageView.setImage(restaurantImage);
         rImageView.setPreserveRatio(true);
-        rImageView.setFitWidth(250);
+        rImageView.maxWidth(250);
+        rImageView.setFitHeight(120);
+        ImageView rImageView2 = new ImageView();
+        rImageView2.setPreserveRatio(true);
+        rImageView2.maxWidth(250);
+        rImageView2.setFitHeight(120);
+        ImageView rImageView3 = new ImageView();
+        rImageView3.setPreserveRatio(true);
+        rImageView3.maxWidth(250);
+        rImageView3.setFitHeight(120);
 
-        Button addImg = new Button("Add Image");
+        Button addImg = new Button(getLang().getString("addimg"));
         addImg.getStyleClass().add("whitebuttonwide");
-        Button discard = new Button("Discard");
+        Button discard = new Button(getLang().getString("discard"));
         discard.getStyleClass().add("whitebuttonwide");
-        Button save = new Button("Save");
+        Button save = new Button(getLang().getString("save"));
         save.getStyleClass().add("blackbuttonwide");
 
+
+        File[] images = new File[3];
         addImg.setOnMouseClicked(event -> {
             FileChooser fileChooser = new FileChooser();
 
@@ -124,13 +175,27 @@ public class ReviewAddController implements Initializable {
 
             //Show open file dialog
             File file = fileChooser.showOpenDialog(null);
-            System.out.println(file.toURI());
-            System.out.println(Paths.get(file.toURI()));
 
             if (file != null) {
-                Image image = new Image(file.toURI().toString());
-                setImgfile(file);
-                rImageView.setImage(image);
+                try {
+                    if(Files.size(Paths.get(file.toURI()))<1024*1024){
+                        Image image = new Image(file.toURI().toString());
+                        images[getIndex()]= file;
+                        if(getIndex()==0)rImageView.setImage(image);
+                        if(getIndex()==1)rImageView2.setImage(image);
+                        if(getIndex()==2)rImageView3.setImage(image);
+                        iterIndex();
+                    }
+                    else{
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("File too big!");
+                        alert.setContentText("Please ensure that the size of a photo is under 1MB");
+                        alert.showAndWait();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         discard.setOnMouseClicked(event -> {
@@ -147,6 +212,7 @@ public class ReviewAddController implements Initializable {
             stage.setScene(scene);
         });
         save.setOnMouseClicked(event -> {
+            setImgfile(images);
             addReview("http://localhost:8080/reviews?restaurant_id="+restaurantJson.getInt("id"), revText.getText(), (int) stars.getValue());
             Stage stage = (Stage) discard.getScene().getWindow();
             Parent root = null;
@@ -163,7 +229,7 @@ public class ReviewAddController implements Initializable {
 
         restInfo.setSpacing(20);
         restInfo.setAlignment(Pos.TOP_CENTER);
-        restInfo.getChildren().addAll(spacer1,rImageView,spacer3,addImg,discard,save,spacer2);
+        restInfo.getChildren().addAll(spacer1,rImageView,rImageView2,rImageView3,spacer3,addImg,discard,save,spacer2);
     }
 
     public void addReview(String url, String text, int stars){
@@ -191,27 +257,40 @@ public class ReviewAddController implements Initializable {
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
-        
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://localhost:8080/photos?username=jano4&review_id="+reviewId);
-        httpPost.setHeader("auth",JSONLoaded.getUser().getString("token"));
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.addBinaryBody(
-                "file", getImgfile(), ContentType.APPLICATION_OCTET_STREAM, "xx.jpg");
+        File[] images = getImgfile();
 
-        HttpEntity multipart = builder.build();
-        httpPost.setEntity(multipart);
+        try{
+            for (File image : images) {
+                CloseableHttpClient client = HttpClients.createDefault();
+                HttpPost httpPost = new HttpPost("http://localhost:8080/photos?username=jano4&review_id=" + reviewId);
+                httpPost.setHeader("auth", JSONLoaded.getUser().getString("token"));
+                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                System.out.println(image);
+                builder.addBinaryBody(
+                        "file", image, ContentType.APPLICATION_OCTET_STREAM, "xx.jpg");
 
-        try {
-            CloseableHttpResponse response2 = client.execute(httpPost);
-        } catch (IOException e) {
+                HttpEntity multipart = builder.build();
+                httpPost.setEntity(multipart);
+                try {
+                    CloseableHttpResponse response2 = client.execute(httpPost);
+                    System.out.println(Arrays.toString(new StatusLine[]{response2.getStatusLine()}));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                TimeUnit.SECONDS.sleep(1);
+            }
+        } catch (IllegalArgumentException e){
+            System.out.println("uploaded less than max photos");
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        try {
-            client.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        resetIndex();
+
     }
 
     public void menuBarF(){
@@ -219,17 +298,61 @@ public class ReviewAddController implements Initializable {
         menubar.getStyleClass().add("menubar");
         menubar.setVisible(false);
         menubar.setSpacing(20);
-        Button goBack = new Button("\uD83E\uDC14 Close");
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
         Pane spacer = new Pane();
         spacer.setPrefHeight(200);
-        Button restaurant = new Button("Restaurants");
-        Button settings = new Button("Settings");
+        Button home = new Button(getLang().getString("home"));
+        Button restaurant = new Button(getLang().getString("restaurants"));
+        Button settings = new Button(getLang().getString("lng"));
+        home.getStyleClass().add("whitebuttonmenu");
         restaurant.getStyleClass().add("whitebuttonmenu");
         settings.getStyleClass().add("whitebuttonmenu");
+        if(JSONLoaded.getLang().equals("sk")){
+            settings.setText(getLang().getString("lng")+" - SK");
+        }
+        if(JSONLoaded.getLang().equals("en")){
+            settings.setText(getLang().getString("lng")+" - EN");
+        }
+        settings.setOnMouseClicked(event -> {
+            if(JSONLoaded.getLang().equals("sk")){
+                JSONLoaded.setCountry("EN");
+                JSONLoaded.setLang("en");
+                ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
+                setLang(lngBndl);
+                SetScreen();
+                menubar.setVisible(true);
+            }
+            else if(JSONLoaded.getLang().equals("en")){
+                JSONLoaded.setCountry("SK");
+                JSONLoaded.setLang("sk");
+                ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
+                setLang(lngBndl);
+                SetScreen();
+                menubar.setVisible(true);
+            }
+        });
         goBack.getStyleClass().add("backbutton");
-        menubar.getChildren().addAll(goBack,spacer,restaurant,settings);
-        menubtn.setOnMouseClicked(e -> menubar.setVisible(true));
-        goBack.setOnMouseClicked(e -> menubar.setVisible(false));
+        menubar.getChildren().addAll(goBack,spacer,home, restaurant,settings);
+        menubtn.setOnMouseClicked(e -> {
+            menubar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            menubar.setVisible(false);
+        });
+        home.setOnMouseClicked(e -> {
+            Stage stage = (Stage) home.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
         restaurant.setOnMouseClicked(e -> {
             Stage stage = (Stage) restaurant.getScene().getWindow();
             Parent root = null;
@@ -242,6 +365,377 @@ public class ReviewAddController implements Initializable {
             Scene scene = new Scene(root, 1280, 720);
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
             stage.setScene(scene);
+        });
+    }
+
+    public void guestBarF() {
+        userBar.getChildren().clear();
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
+        Pane spacer = new Pane();
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(40);
+        spacer2.setPrefHeight(30);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text(getLang().getString("guestt"));
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
+        Button login = new Button(getLang().getString("lgn"));
+        Button register = new Button(getLang().getString("rgs"));
+
+        login.setOnMouseClicked(e -> {
+            Stage stage = (Stage) login.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("login.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        register.setOnMouseClicked(e -> {
+            Stage stage = (Stage) register.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("register.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        login.getStyleClass().add("whitebuttonmenu");
+        register.getStyleClass().add("whitebuttonmenu");
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack, spacer, userImage, userName,spacer2, login,register);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
+        });
+    }
+
+    public void userBarManagerF() {
+        userBar.getChildren().clear();
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
+        Button accountSettings = new Button(getLang().getString("accset"));
+        Button manageRestaurant = new Button(getLang().getString("mngres"));
+        Button logout = new Button(getLang().getString("lgo"));
+
+        System.out.println(JSONLoaded.getActiveUser().username);
+        System.out.println(JSONLoaded.getActiveUser().role);
+
+        Pane spacer = new Pane();
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(20);
+        spacer2.setPrefHeight(15);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text(JSONLoaded.getActiveUser().username);
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
+        accountSettings.setOnMouseClicked(e -> {
+            Stage stage = (Stage) accountSettings.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("profile.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        logout.setOnMouseClicked(e -> {
+            JSONLoaded.setUser(null);
+            JSONLoaded.setActiveUser(null);
+            Stage stage = (Stage) logout.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        manageRestaurant.setOnMouseClicked(e -> {
+            Stage stage = (Stage) manageRestaurant.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("createRestaurant.fxml")));
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        accountSettings.getStyleClass().add("whitebuttonmenu");
+        manageRestaurant.getStyleClass().add("whitebuttonmenu");
+        logout.getStyleClass().add("whitebuttonmenu");
+
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, logout);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
+        });
+    }
+
+    public void userBarAdminF() {
+        userBar.getChildren().clear();
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
+        Button accountSettings = new Button(getLang().getString("accset"));
+        Button manageRestaurant = new Button(getLang().getString("mngresall"));
+        Button manageUsers = new Button(getLang().getString("mngusr"));
+        Button manageOrders = new Button(getLang().getString("mngord"));
+
+        Button logout = new Button(getLang().getString("lgo"));
+
+        System.out.println(JSONLoaded.getActiveUser().username);
+        System.out.println(JSONLoaded.getActiveUser().role);
+
+        Pane spacer = new Pane();
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(20);
+        spacer2.setPrefHeight(15);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text(JSONLoaded.getActiveUser().username);
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
+        accountSettings.setOnMouseClicked(e -> {
+            Stage stage = (Stage) accountSettings.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("profile.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        logout.setOnMouseClicked(e -> {
+            JSONLoaded.setUser(null);
+            JSONLoaded.setActiveUser(null);
+            Stage stage = (Stage) logout.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        manageOrders.setOnMouseClicked(e -> {
+            Stage stage = (Stage) manageOrders.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ordersList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        manageUsers.setOnMouseClicked(e -> {
+            Stage stage = (Stage) manageUsers.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("userList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        manageRestaurant.setOnMouseClicked(e -> {
+            Stage stage = (Stage) manageRestaurant.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        accountSettings.getStyleClass().add("whitebuttonmenu");
+        manageRestaurant.getStyleClass().add("whitebuttonmenu");
+        manageUsers.getStyleClass().add("whitebuttonmenu");
+        logout.getStyleClass().add("whitebuttonmenu");
+        manageOrders.getStyleClass().add("whitebuttonmenu");
+
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, manageRestaurant, manageUsers, manageOrders, logout);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
+        });
+    }
+
+    public void userBarUserF() {
+        userBar.getChildren().clear();
+        userBar.getStyleClass().add("menubar");
+        userBar.setVisible(false);
+        userBar.setSpacing(20);
+        Button goBack = new Button("\uD83E\uDC14"+getLang().getString("cls"));
+        Button accountSettings = new Button(getLang().getString("accset"));
+        Button myOrders = new Button(getLang().getString("myord"));
+
+        Button logout = new Button(getLang().getString("lgo"));
+
+        System.out.println(JSONLoaded.getActiveUser().username);
+        System.out.println(JSONLoaded.getActiveUser().role);
+
+        Pane spacer = new Pane();
+        Pane spacer2 = new Pane();
+        spacer.setPrefHeight(20);
+        spacer2.setPrefHeight(15);
+
+        File imageFile = new File("src/main/resources/sk/vava/zalospevaci/images/account_circle.png");
+        Image image = new Image(imageFile.toURI().toString());
+        ImageView userImage = new ImageView(image);
+
+        Text userName = new Text(JSONLoaded.getActiveUser().username);
+
+        userImage.setFitHeight(130);
+        userImage.setFitWidth(130);
+        userImage.setPreserveRatio(true);
+
+        accountSettings.setOnMouseClicked(e -> {
+            Stage stage = (Stage) accountSettings.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("profile.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        logout.setOnMouseClicked(e -> {
+            JSONLoaded.setUser(null);
+            JSONLoaded.setActiveUser(null);
+            Stage stage = (Stage) logout.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("homeScreen.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        myOrders.setOnMouseClicked(e -> {
+            Stage stage = (Stage) myOrders.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ordersList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        myOrders.setOnMouseClicked(e -> {
+            Stage stage = (Stage) myOrders.getScene().getWindow();
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ordersList.fxml")));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            assert root != null;
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+            stage.setScene(scene);
+        });
+
+        accountSettings.getStyleClass().add("whitebuttonmenu");
+        logout.getStyleClass().add("whitebuttonmenu");
+        myOrders.getStyleClass().add("whitebuttonmenu");
+
+        goBack.getStyleClass().add("backbutton");
+        userBar.getChildren().addAll(goBack,spacer,userImage,userName,spacer2,accountSettings, myOrders, logout);
+        userbtn.setOnMouseClicked(e -> {
+            userBar.setVisible(true);
+        });
+        goBack.setOnMouseClicked(e -> {
+            userBar.setVisible(false);
         });
     }
 }
