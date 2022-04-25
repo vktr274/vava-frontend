@@ -476,6 +476,7 @@ public class ProfileController implements Initializable {
 
             if(editingUsername){
                 editedUser.setUsername(editUsernameTextField.getText());
+                JSONLoaded.setChangedName(editUsernameTextField.getText());
             }
 
             if(editingEmail){

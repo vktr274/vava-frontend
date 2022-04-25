@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Button;
@@ -88,8 +89,16 @@ public class HomeScreenController implements Initializable {
 
         if (user != null) {
             if(!Objects.equals(user.getString("token"), "")){
+
                 String userString = getJSON("http://localhost:8080/users/" + user.getString("name"));
-                JSONObject userJSON = new JSONObject(userString);
+
+                JSONObject userJSON;
+                try{
+                    userJSON = new JSONObject(userString);
+                }catch (JSONException e){
+                    userString = getJSON("http://localhost:8080/users/" + JSONLoaded.getChangedName());
+                    userJSON = new JSONObject(userString);
+                }
 
                 JSONObject addressJSON;
                 try {

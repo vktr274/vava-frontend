@@ -318,8 +318,8 @@ public class RestaurantListController implements Initializable {
             }
             if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")){
                 blockbtn.setOnMouseClicked(event -> {
-                    if(JSONLoaded.getIsManaging()==false)JSONLoaded.setIsManaging(true);
-                    else if (JSONLoaded.getIsManaging()==true)JSONLoaded.setIsManaging(false);
+                    if(!JSONLoaded.getIsManaging())JSONLoaded.setIsManaging(true);
+                    else JSONLoaded.setIsManaging(false);
                     restaurantSetScreen();
                 });
             }
@@ -329,10 +329,10 @@ public class RestaurantListController implements Initializable {
             if(!Objects.equals(JSONLoaded.getActiveUser().role, "admin")) blockbtn.setVisible(false);
             if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")){
                 blockbtn.setVisible(true);
-                if(JSONLoaded.getIsManaging()==true){
+                if(JSONLoaded.getIsManaging()){
                     blockbtn.setText(getLang().getString("mngrbtn"));
                 }
-                if(JSONLoaded.getIsManaging()==false){
+                if(!JSONLoaded.getIsManaging()){
                     blockbtn.setText(getLang().getString("als"));
                 }
 

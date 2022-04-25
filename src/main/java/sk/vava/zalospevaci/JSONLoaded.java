@@ -11,6 +11,14 @@ public class JSONLoaded {
     private static String country;
     private static boolean isManaging;
     private static String search = "";
+    private static String changedName = "";
+
+    public static void setChangedName(String changedName){
+        JSONLoaded.changedName = changedName;
+    }
+    public static String getChangedName(){
+        return JSONLoaded.changedName;
+    }
 
     public static void setSearch(String search){
         JSONLoaded.search = search;
