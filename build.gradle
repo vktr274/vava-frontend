@@ -1,10 +1,13 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'
+    id 'org.springframework.boot' version '2.6.4'
 }
 
 group 'sk.vava.zalospevaci'
 version '1.0'
+
+mainClassName = 'sk.vava.zalospevaci.Main'
 
 repositories {
     mavenCentral()
