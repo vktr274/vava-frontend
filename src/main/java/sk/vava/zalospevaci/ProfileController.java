@@ -43,6 +43,8 @@ public class ProfileController implements Initializable {
     private VBox menubar;
     @FXML
     private VBox userBar;
+    @FXML
+    private HBox topbox;
 
     private static ResourceBundle lang;
     private void setLang(ResourceBundle lang){
@@ -189,6 +191,8 @@ public class ProfileController implements Initializable {
 
 
     public void profileScreen() {
+        mainVBox.getChildren().clear();
+        mainVBox.getChildren().add(topbox);
         mainVBox.setSpacing(20);
 
         if(JSONLoaded.getActiveUser() != null){

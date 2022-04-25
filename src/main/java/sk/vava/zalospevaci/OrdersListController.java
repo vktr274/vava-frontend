@@ -30,6 +30,7 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -141,7 +142,7 @@ public class OrdersListController implements Initializable {
         JSONArray array = full.getJSONArray("orders");
         setElements(metadata.getInt("total_elements"));
         setTotalpg(metadata.getInt("total_pages"));
-        Text ordersLabel = new Text("Orders");
+        Text ordersLabel = new Text(getLang().getString("orders"));
         ordersLabel.getStyleClass().add("label");
         tree.getChildren().add(ordersLabel);
         if(array.length()==0 && getElements()>0){
@@ -174,7 +175,7 @@ public class OrdersListController implements Initializable {
             });*/
 
             Button delete = new Button();
-            delete.setText("Remove");
+            delete.setText(getLang().getString("delete"));
             delete.getStyleClass().add("whitebutton");
             delete.setOnMouseClicked(event -> {
                 handleDel(object.getInt("id"));
@@ -190,7 +191,7 @@ public class OrdersListController implements Initializable {
                 price = (object.getBigDecimal("price").divide(new BigDecimal(100), 1, RoundingMode.HALF_EVEN));
                 priceText.setText(price + " \u20ac");
             }
-            else priceText.setText("No\nreviews");
+            else priceText.setText(getLang().getString("noscore"));
             System.out.println(object.get("price").getClass().getName());
             priceText.getStyleClass().add("price");
 
@@ -217,8 +218,8 @@ public class OrdersListController implements Initializable {
 
             order.setOnMouseClicked(e -> {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Order Contents");
-                alert.setHeaderText("This order contained:");
+                alert.setTitle(getLang().getString("ordc"));
+                alert.setHeaderText(getLang().getString("ordt"));
                 JSONArray items = object.getJSONArray("items");
                 StringBuilder itemstring = new StringBuilder();
                 for (int j = 0; j < items.length(); j++) {
@@ -231,7 +232,7 @@ public class OrdersListController implements Initializable {
             tree.getChildren().add(order);
         }
 
-        Text ppg = new Text("Show " + getPerpage() + " items");
+        Text ppg = new Text(getLang().getString("show") + getPerpage() + getLang().getString("items"));
         ppg.getStyleClass().add("itemnametext");
         Button morepg = new Button("+");
         morepg.setOnMouseClicked(event -> {
@@ -251,7 +252,7 @@ public class OrdersListController implements Initializable {
         perpgbtn.setAlignment(Pos.CENTER);
         if(getPerpage()==1) lesspg.setVisible(false);
 
-        Text pg = new Text("Page:" + (getPage()+1));
+        Text pg = new Text(getLang().getString("page") + (getPage()+1));
         pg.getStyleClass().add("itemnametext");
         Button nextpg = new Button("+");
         nextpg.setOnMouseClicked(event -> {

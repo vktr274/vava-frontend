@@ -45,6 +45,8 @@ public class AddItemController implements Initializable {
     private VBox menubar;
     @FXML
     private VBox userBar;
+    @FXML
+    private HBox topbox;
 
     private static ResourceBundle lang;
     private void setLang(ResourceBundle lang){
@@ -102,6 +104,8 @@ public class AddItemController implements Initializable {
     }
 
     private void createRestaurants() {
+        mainVBox.getChildren().clear();
+        mainVBox.getChildren().add(topbox);
         VBox container = new VBox();
         VBox form = new VBox();
         if(JSONLoaded.getActiveUser() != null){
