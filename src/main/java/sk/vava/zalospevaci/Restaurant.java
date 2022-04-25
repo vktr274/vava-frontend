@@ -27,4 +27,12 @@ public class Restaurant {
     this.address = address;
   }
 
+  public Phone getPhone() {
+    return phone;
+  }
+
+  public void setPhone(Phone phone) {
+    this.phone = phone;
+  }
+
 }
