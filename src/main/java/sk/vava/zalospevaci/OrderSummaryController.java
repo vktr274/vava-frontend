@@ -86,6 +86,7 @@ public class OrderSummaryController implements Initializable {
 
     public void SetScreen(){
         order.setSpacing(25);
+        order.getChildren().clear();
 
         if(JSONLoaded.getActiveUser() != null){
             if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
@@ -264,6 +265,7 @@ public class OrderSummaryController implements Initializable {
         });
 
         subtotal.setSpacing(20);
+        subtotal.getChildren().clear();
         subtotal.setAlignment(Pos.TOP_CENTER);
         subtotal.getChildren().addAll(spacerSubTop,subTotalLabel,currentPrice,vatInfo,spacerMiddle,discard,btnOrder,spacerSubBot);
     }

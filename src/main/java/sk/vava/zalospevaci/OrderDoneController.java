@@ -52,6 +52,7 @@ public class OrderDoneController implements Initializable {
     public void SetScreen(){
         menuBarF();
         orderD.setSpacing(30);
+        orderD.getChildren().clear();
         orderD.setAlignment(Pos.CENTER);
 
         if(JSONLoaded.getActiveUser() != null){

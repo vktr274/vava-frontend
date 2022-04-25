@@ -12,6 +12,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -55,6 +56,9 @@ public class LoginController implements Initializable  {
     private VBox menubar;
     @FXML
     private VBox userBar;
+    @FXML
+    private HBox topbox;
+
 
     private static ResourceBundle lang;
     private void setLang(ResourceBundle lang){
@@ -98,6 +102,8 @@ public class LoginController implements Initializable  {
     }
 
     public void loginScreen(){
+        mainVBox.getChildren().clear();
+        mainVBox.getChildren().add(topbox);
         VBox container = new VBox();
         VBox form = new VBox();
 
@@ -265,7 +271,6 @@ public class LoginController implements Initializable  {
                 JSONLoaded.setLang("en");
                 ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
                 setLang(lngBndl);
-                mainVBox.getChildren();
                 loginScreen();
                 menubar.setVisible(true);
             }
@@ -274,7 +279,6 @@ public class LoginController implements Initializable  {
                 JSONLoaded.setLang("sk");
                 ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
                 setLang(lngBndl);
-                mainVBox.getChildren().clear();
                 loginScreen();
                 menubar.setVisible(true);
             }

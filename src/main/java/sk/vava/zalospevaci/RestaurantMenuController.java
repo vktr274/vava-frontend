@@ -86,6 +86,7 @@ public class RestaurantMenuController implements Initializable {
 
     public void SetScreen(){
         menu.setSpacing(25);
+        menu.getChildren().clear();
 
         if(JSONLoaded.getActiveUser() != null){
             if(Objects.equals(JSONLoaded.getActiveUser().role, "manager")) {
@@ -287,6 +288,7 @@ public class RestaurantMenuController implements Initializable {
 
 
         restInfo.setSpacing(20);
+        restInfo.getChildren().clear();
         restInfo.setAlignment(Pos.TOP_CENTER);
         if(JSONLoaded.getActiveUser()!=null && JSONLoaded.getIsManaging()){
             restInfo.getChildren().addAll(spacer1,rN,addr,ph,spacer3,goback,reviews,checkout,spacer2);

@@ -55,6 +55,8 @@ public class RegisterController implements Initializable {
     private VBox menubar;
     @FXML
     private VBox userBar;
+    @FXML
+    private HBox topbox;
 
     private static ResourceBundle lang;
     private void setLang(ResourceBundle lang){
@@ -145,6 +147,8 @@ public class RegisterController implements Initializable {
     }
 
     public void register() {
+        mainVBox.getChildren().clear();
+        mainVBox.getChildren().add(topbox);
         VBox container = new VBox();
         VBox form = new VBox();
 
