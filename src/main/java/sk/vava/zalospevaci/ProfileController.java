@@ -64,11 +64,20 @@ public class ProfileController implements Initializable {
             .build();
 
     public User buildUser(JSONObject response){
-        JSONObject JSONAddress = response.getJSONObject("address");
-        JSONObject JSONPhone = response.getJSONObject("phone");
+        JSONObject JSONAddress;
+        Address address = null;
+        if(response.get("address") instanceof JSONObject){
+            JSONAddress = response.getJSONObject("address");
+            address = new Address(JSONAddress.getString("name"), JSONAddress.getString("street"), JSONAddress.getString("city"), JSONAddress.getString("state"), JSONAddress.getString("postcode"), JSONAddress.getString("building_number"));
 
-        Address address = new Address(JSONAddress.getString("name"), JSONAddress.getString("street"), JSONAddress.getString("city"), JSONAddress.getString("state"), JSONAddress.getString("postcode"), JSONAddress.getString("building_number"));
-        Phone phone = new Phone(JSONPhone.getString("number"), JSONPhone.getString("country_code"));
+        }
+        JSONObject JSONPhone;
+        Phone phone = null;
+        if(response.get("phone") instanceof JSONObject){
+            JSONPhone = response.getJSONObject("phone");
+            phone = new Phone(JSONPhone.getString("number"), JSONPhone.getString("country_code"));
+        }
+
         return new User(response.getInt("id"), response.getString("username"), response.getString("email"), response.getString("role"), response.getBoolean("blocked"), address, phone);
     }
 

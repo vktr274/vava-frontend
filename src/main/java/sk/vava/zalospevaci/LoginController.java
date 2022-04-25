@@ -265,6 +265,7 @@ public class LoginController implements Initializable  {
                 JSONLoaded.setLang("en");
                 ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
                 setLang(lngBndl);
+                mainVBox.getChildren();
                 loginScreen();
                 menubar.setVisible(true);
             }
@@ -273,6 +274,7 @@ public class LoginController implements Initializable  {
                 JSONLoaded.setLang("sk");
                 ResourceBundle lngBndl = ResourceBundle.getBundle("LangBundle", new Locale(JSONLoaded.getLang(), JSONLoaded.getCountry()));
                 setLang(lngBndl);
+                mainVBox.getChildren().clear();
                 loginScreen();
                 menubar.setVisible(true);
             }

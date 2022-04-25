@@ -97,7 +97,7 @@ public class CreateRestaurantController implements Initializable {
                 stage.setScene(scene);
             }
         } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
+            System.out.println("created");
         }
     }
 
@@ -255,6 +255,17 @@ public class CreateRestaurantController implements Initializable {
                 Restaurant restaurant = new Restaurant(name.getText(), restaurantAddress, restaurantPhone);
 
                 handleCreate("http://localhost:8080/restaurants", restaurant);
+                Stage stage = (Stage) registerButton.getScene().getWindow();
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("restaurantList.fxml")));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                assert root != null;
+                Scene scene = new Scene(root, 1280, 720);
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+                stage.setScene(scene);
             }
         });
 
