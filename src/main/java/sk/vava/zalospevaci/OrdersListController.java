@@ -161,18 +161,6 @@ public class OrdersListController implements Initializable {
             spacer1.setPrefWidth(0);
             spacer3.setPrefWidth(0);
 
-            /*Button deleteBtn = new Button();
-            deleteBtn.setText("Delete Order");
-            deleteBtn.getStyleClass().add("whitebutton");*/
-
-            /*Button block = new Button();
-            if(object.getBoolean("blocked")) block.setText("Unblock");
-            else block.setText("Block");
-            block.getStyleClass().add("whitebutton");
-            block.setOnMouseClicked(event -> {
-                handleBlock(object.getInt("id"));
-                restaurantSetScreen();
-            });*/
 
             Button delete = new Button();
             delete.setText(getLang().getString("delete"));
@@ -182,9 +170,6 @@ public class OrdersListController implements Initializable {
                 restaurantSetScreen();
             });
 
-
-            //byte[] emojiByteCode = new byte[]{(byte)0xE2, (byte)0xAD, (byte)0x90};
-            //String emoji = new String(emojiByteCode, StandardCharsets.UTF_8);
             Label priceText = new Label();
             BigDecimal price;
             if(object.get("price")!=JSONObject.NULL){
@@ -200,7 +185,8 @@ public class OrdersListController implements Initializable {
             orderBox.setAlignment(Pos.CENTER_LEFT);
             Text restN = new Text(object.getString("user"));
             restN.getStyleClass().add("username");
-            Text restT = new Text(object.getString("ordered_at"));
+            String pattern = "^(.*)(T)(.*)[.](.*)$";
+            Text restT = new Text(object.getString("ordered_at").replaceAll(pattern,"$1 $3"));
             restT.getStyleClass().add("ordertime");
             orderBox.getChildren().addAll(restN,restT);
 
