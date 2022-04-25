@@ -276,7 +276,7 @@ public class RegisterController implements Initializable {
             }
 
             RadioButton rb = (RadioButton) radioGroup.getSelectedToggle();
-            boolean isManager = Objects.equals(rb.getText(), "Restaurant Manager");
+            boolean isManager = Objects.equals(rb.getText(), getLang().getString("restmngr"));
             handleRegister("http://localhost:8080/users", name.getText(), hashedPassword, email.getText(), isManager, prefix.getText(), phone.getText());
             if(successful) {
                 Stage stage = (Stage) registerButton.getScene().getWindow();
